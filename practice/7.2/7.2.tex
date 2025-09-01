@@ -1,0 +1,394 @@
+\documentclass[12pt]{article}
+
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{array,graphicx,dcolumn,multirow,abstract,hanging,fancyhdr,float}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{indentfirst}
+
+\DeclareMathOperator{\cond}{cond}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+
+
+\begin{document}
+    \begin{flushright}
+    {v0.3.17}
+    \end{flushright}
+    \begin{flushright}
+    	{01.09.25}
+    \end{flushright}
+    \section*{Вычислительный практикум}
+    \section*{Практическое занятие \#7.2. Метод Гаусса и разложение матрицы на множители. $\bold{LU}$-раз\linebreak ложение, $\bold{LUP}$-разложение}
+
+    \subsection*{LU-разложение}
+
+    Рассмотрим метод Гаусса с более общих позиций. Рассмотрим СЛАУ
+    \begin{equation}
+        \bold{Ax}=\bold{b},
+        \label{7.2:f1}
+    \end{equation}
+    оно же
+    \begin{equation}
+        \bold{A}^{\left(0\right)}\bold{x}=\bold{b}^{\left(0\right)}.
+        \label{7.2:f2}
+    \end{equation}
+
+    При выполнении вычислений 1-го шага исключения по схеме единственного деления система уравнений (\ref{7.2:f2}) приводится к виду
+    \begin{equation}
+        \bold{A}^{\left(1\right)}\bold{x}=\bold{b}^{\left(1\right)},
+        \label{7.2:f3}
+    \end{equation}
+    где
+    \begin{equation}
+        \bold{A}^{\left(1\right)}=
+        \begin{bmatrix}
+        a_{11}^{\left(0\right)} & a_{12}^{\left(0\right)} & a_{13}^{\left(0\right)} & \ldots & a_{1n}^{\left(0\right)} \\
+        0 & a_{22}^{\left(1\right)} & a_{23}^{\left(1\right)} & \ldots & a_{2n}^{\left(1\right)} \\
+        0 & a_{32}^{{\left(1\right)}} & a_{33}^{\left(1\right)} & \ldots & a_{3n}^{\left(1\right)} \\
+        \vdots & \vdots & \vdots & \ddots & \vdots \\
+        0 & a_{n2}^{\left(1\right)} & a_{n3}^{\left(1\right)} & \ldots & a_{nn}^{\left(1\right)}
+        \end{bmatrix},
+        \quad
+        \bold{b}^{\left(1\right)}=
+        \begin{bmatrix}
+            b_1^{\left(0\right)} \\
+            b_2^{\left(1\right)} \\
+            b_3^{\left(1\right)} \\
+            \vdots \\
+            b_n^{{\left(1\right)}}
+        \end{bmatrix},
+    \end{equation}
+    а коэффициенты $a_{ij}^{\left(1\right)}$, $b_{i}^{\left(1\right)}$, $i,j=2,3,\ldots,n$ вычисляются по формулам
+    \begin{equation}
+        \mu_{i1}=\frac{a_{i1}}{a_{11}},\quad i=2,3,\ldots, n,
+    \end{equation}
+    \begin{equation}
+        a_{ij}^{\left(1\right)}=a_{ij}^{\left(0\right)}-\mu_{i1}\cdot a^{\left(0\right)}_{1j},\quad b_{i}^{\left(1\right)}=b_{i}^{\left(0\right)}-\mu_{i1}{b^{\left(0\right)}_{1}},\quad i,j=2,3,\ldots,n.
+    \end{equation}
+
+    Введем в рассмотрение матрицу
+    \begin{equation}
+        \bold{M}_1=\begin{bmatrix}
+            1 & 0 & 0 & \ldots & 0 \\
+            -\mu_{21} & 1 & 0 & \ldots & 0 \\
+            -\mu_{31} & 0 & 1 & \ldots & 0 \\
+             \vdots & \vdots & \vdots & \ddots & \vdots \\
+             -\mu_{n1} & 0 & 0 & \ldots & 1
+        \end{bmatrix}.
+    \end{equation}
+    Нетрудно проверить, что будут выполняться следующие равенства
+    \begin{equation}
+        \bold{A}^{\left(1\right)}=\bold{M}_1\bold{A}^{\left(0\right)},\quad \bold{b}^{\left(1\right)}=\bold{M}_1 \bold{b}^{\left(0\right)},
+    \end{equation}
+    другими словами преобразование системы (\ref{7.2:f2}) к виду (\ref{7.2:f3}) эквивалентно умножению левой и правой частей системы на матрицу $\bold{M}_1$.
+
+    Аналогично можно показать, что вычисления 2-го шага исключения приводят систему (\ref{7.2:f3}) к виду
+    \begin{equation}
+        \bold{A}^{\left(2\right)}\bold{x}=\bold{b}^{\left(2\right)},
+    \end{equation}
+    где
+    \begin{equation}
+        \bold{A}^{\left(2\right)}=\bold{M}_2\bold{A}^{\left(1\right)}, \quad \bold{b}^{\left(2\right)}=\bold{M}_2\bold{b}^{\left(1\right)},
+    \end{equation}
+    \begin{equation}
+        \bold{A}^{\left(2\right)}=
+        \begin{bmatrix}
+        a_{11}^{\left(0\right)}       & a_{12}^{\left(0\right)} & a_{13}^{\left(0\right)} & \ldots                  & a_{1n}^{\left(0\right)} \\
+        0                             & a_{22}^{\left(1\right)}   & a_{23}^{\left(1\right)} & \ldots                  & a_{2n}^{\left(1\right)} \\
+        0                             & 0 & a_{33}^{\left(2\right)} & \ldots                  & a_{3n}^{\left(2\right)} \\
+        \vdots                        & \vdots                  & \vdots                  & \ddots                  & \vdots \\
+        0 & 0   & a_{n3}^{\left(2\right)} & \ldots                  & a_{nn}^{\left(2\right)}
+        \end{bmatrix},\quad
+        \bold{b}^{\left(2\right)}=
+        \begin{bmatrix}
+            b_1^{\left(0\right)} \\
+            b_2^{\left(1\right)} \\
+            b_3^{\left(2\right)} \\
+            \vdots \\
+            b_n^{{\left(2\right)}}
+        \end{bmatrix},
+    \end{equation}
+    \begin{equation}
+        \bold{M}_2=
+        \begin{bmatrix}
+            1 & 0 & 0 & \ldots & 0 \\
+            0 & 1 & 0 & \ldots & 0 \\
+            0 & -\mu_{32} & 1 & \ldots & 0 \\
+             \vdots & \vdots & \vdots & \ddots & \vdots \\
+             0 & -\mu_{n2} & 0 & \ldots & 1
+        \end{bmatrix}.
+    \end{equation}
+
+    После $\left(n-1\right)$-го шага, завершающего прямой ход, система оказывается приведенной к виду
+    \begin{equation}
+        \bold{A}^{\left(n-1\right)}\bold{x}=\bold{b}^{\left(n-1\right)}
+    \end{equation}
+    с верхней треугольной матрицей $\bold{A}^{\left(n-1\right)}$. Здесь
+    \begin{equation}
+        \bold{A}^{\left(n-1\right)}=\bold{M}_{n-1}\bold{A}^{\left(n-2\right)},\quad \bold{b}^{\left(n-1\right)}=\bold{M}_{n-1}\bold{b}^{\left(n-2\right)},
+    \end{equation}
+    где
+        \begin{equation}
+        \bold{A}^{\left(n-1\right)}=
+        \begin{bmatrix}
+        a_{11}^{\left(0\right)}       & a_{12}^{\left(0\right)} & a_{13}^{\left(0\right)} & \ldots                  & a_{1n}^{\left(0\right)} \\
+        0                             & a_{22}^{\left(1\right)}   & a_{23}^{\left(1\right)} & \ldots                  & a_{2n}^{\left(1\right)} \\
+        0                             & 0 & a_{33}^{\left(2\right)} & \ldots                  & a_{3n}^{\left(2\right)} \\
+        \vdots                        & \vdots                  & \vdots                  & \ddots                  & \vdots \\
+        0 & 0   & 0 & \ldots                  & a_{nn}^{\left(n-1\right)}
+        \end{bmatrix},\quad
+        \bold{b}^{\left(n-1\right)}=
+        \begin{bmatrix}
+            b_1^{\left(0\right)} \\
+            b_2^{\left(1\right)} \\
+            b_3^{\left(2\right)} \\
+            \vdots \\
+            b_n^{{\left(n-1\right)}}
+        \end{bmatrix},
+    \end{equation}
+    \begin{equation}
+        \bold{M}_{n-1}=
+        \begin{bmatrix}
+            1 & 0 & 0 & \ldots & 0 & 0 \\
+            0 & 1 & 0 & \ldots & 0 & 0 \\
+            0 & 0 & 1 & \ldots & 0 & 0 \\
+             \vdots & \vdots & \vdots & \ddots & \vdots &  \vdots \\
+             0 & 0 & 0 & \ldots & 1 & 0 \\
+             0 & 0 & 0 & \ldots & -\mu_{n,n-1} & 1
+        \end{bmatrix}.
+    \end{equation}
+
+    Заметим, что матрица $\bold{A}^{\left(n-1\right)}$ получена из матрицы $\bold{A}$ последовательным умножением на $\bold{M}_1, \bold{M}_2, \ldots, \bold{M}_{n-1}$:
+    \begin{equation}
+        \bold{A}^{\left(n-1\right)}=\bold{M}_{n-1}\ldots\bold{M}_2\bold{M}_1\bold{A}.
+        \label{7.2:f15}
+    \end{equation}
+    Аналогично,
+    \begin{equation}
+        \bold{b}^{\left(n-1\right)}=\bold{M}_{n-1}\ldots\bold{M}_2\bold{M}_1\bold{b}.
+    \end{equation}
+
+    Из равенства (\ref{7.2:f15}) вытекает следующее представление:
+    \begin{equation}
+        \bold{A} = \bold{M}_1^{-1}\bold{M}_2^{-1}\ldots\bold{M}_{n-1}^{-1}\bold{A}^{\left(n-1\right)}.
+        \label{7.2:f17}
+    \end{equation}
+    Как легко проверить
+    \begin{equation}
+        \begin{gathered}
+            \bold{M}_1^{-1}=\begin{bmatrix}
+                1 & 0 & 0 & \ldots & 0 \\
+                \mu_{21} & 1 & 0 & \ldots & 0 \\
+                \mu_{31} & 0 & 1 & \ldots & 0 \\
+                \vdots & \vdots & \vdots & \ddots & \vdots \\
+                \mu_{n1} & 0 & 0 & \ldots & 1
+            \end{bmatrix},\quad
+            \bold{M}_2^{-1}=
+            \begin{bmatrix}
+                1 & 0 & 0 & \ldots & 0 \\
+                0 & 1 & 0 & \ldots & 0 \\
+                0 & \mu_{32} & 1 & \ldots & 0 \\
+                 \vdots & \vdots & \vdots & \ddots & \vdots \\
+                 0 & \mu_{n2} & 0 & \ldots & 1
+            \end{bmatrix},\quad\ldots,\\
+            \bold{M}_{n-1}=
+            \begin{bmatrix}
+                1 & 0 & 0 & \ldots & 0 & 0 \\
+                0 & 1 & 0 & \ldots & 0 & 0 \\
+                0 & 0 & 1 & \ldots & 0 & 0 \\
+                 \vdots & \vdots & \vdots & \ddots & \vdots &  \vdots \\
+                 0 & 0 & 0 & \ldots & 1 & 0 \\
+                 0 & 0 & 0 & \ldots & \mu_{n,n-1} & 1
+            \end{bmatrix}.
+        \end{gathered}
+    \end{equation}
+    Для этого достаточно перемножить матрицы $\bold{M}^{-1}_k$ и $\bold{M}_k,$ в результате получим единичную матрицу.
+
+    Введем обозначения
+    \begin{equation}
+        \bold{U}=\bold{A}^{\left(n-1\right)},\quad\bold{L}=\bold{M}_1^{-1}\bold{M}_2^{-1}\ldots\bold{M}_{n-1}^{-1},
+    \end{equation}
+    таким образом
+    \begin{equation}
+        \bold{L}=\begin{bmatrix}
+                1 & 0 & 0 & \ldots & 0 \\
+                \mu_{21} & 1 & 0 & \ldots & 0 \\
+                \mu_{31} & \mu_{32} & 1 & \ldots & 0 \\
+                 \vdots & \vdots & \vdots & \ddots & \vdots \\
+                 \mu_{n1} & \mu_{n2} & \mu_{n3} & \ldots & 1
+            \end{bmatrix}.
+    \end{equation}
+    Тогда равенство (\ref{7.2:f17}) в этих обозначениях имеет вид
+    \begin{equation}
+        \bold{A}=\bold{LU}.
+        \label{7.2:f23}
+    \end{equation}
+
+    Имея матрицы $\bold{L}$ и $\bold{U}$ исходная система (\ref{7.2:f1}) записывается в виде
+    \begin{equation}
+        \bold{LU}\bold{x}=\bold{b}.
+        \label{7.2:f24}
+    \end{equation}
+    Cистема (\ref{7.2:f24}) может быть решена в два шага. На первом шаге решается система
+    \begin{equation}
+        \bold{Ly=b}.
+        \label{7.2:f25}
+    \end{equation}
+    На втором шаге решается система
+    \begin{equation}
+        \bold{Ux=y}.
+        \label{7.2:f26}
+    \end{equation}
+
+    
+    Поскольку матрицы $\bold{L}$ и $\bold{U}$ --- являются треугольными матрицами, системы (\ref{7.2:f25}) и (\ref{7.2:f26}) решаются обратным ходом. Таким образом число арифметических операций для их решения будет составлять $2n^2$. 
+
+    \subsection*{Вычисление определителя матрицы}
+    Имея $\bold{LU}$-разложение матрицы $\bold{A}$ можно легко вычислить ее определитель
+    \begin{equation}
+        \begin{gathered}
+            \det \bold{A}=\det \bold{\left(LU\right)} = \det \bold{L}\det \bold{U}=\\=\left(\prod_{i=1}^{n}\bold{L}_{ii}\right)\left(\prod_{i=1}^{n}\bold{U}_{ii}\right)=1\cdot \left(\prod_{i=1}^{n}\bold{U}_{ii}\right).
+        \end{gathered}
+    \end{equation}
+    
+    \subsection*{Целесообразность метода}
+    
+    Рассмотрим линейное интегральное уравнение вида
+    \begin{equation}
+    	\begin{gathered}
+    		\int_a^b K\left(x,s\right)z\left(s\right)ds=u\left(x\right), \quad x\in\left[a,b\right],
+    	\end{gathered}
+    	\label{7.2:fm_fredholm1}
+    \end{equation}
+    для которого: $z\left(x\right)$ --- неизвестная функция; $K\left(x,s\right)$ --- заданная функция, непрерывная на квадрате $\Pi =\left\{\left(x,s\right) |\, a \leqslant x \leqslant b, a\leqslant s\leqslant b\right\}$; $u\left(x\right)$ --- заданная правая часть интегрального уравнения.
+    
+    Пусть требуется найти решение уравнения (\ref{7.2:fm_fredholm1}), причем его правая часть $u\left(x\right)$ известна с некоторыми погрешностями (шумами) и обозначена $\tilde u\left(x\right)$,
+    $$
+    \Vert u\left(x\right) - \tilde u\left(x\right) \Vert < \varepsilon ,
+    $$
+    где $\varepsilon>0$ --- величина, характеризующая уровень погрешности.
+	
+	\subsubsection*{Пример}
+	
+	Рассмотрим задачу определения спектрального состава излучения\linebreak (электромагнитного, типа $\gamma$-излучения, или рентгеновского, или корпускулярного).
+	
+	Пусть интересующее нас излучение неоднородно и распределение\linebreak плотности числа частиц (фотонов), характеризуется функцией\linebreak $z\left(s\right)$ ($s$ --- частота или энергия).
+	Пропуская это излучение через измерительный прибор, мы получаем экспериментальный спектр $u\left(x\right)$ ($x$ может быть частотой или энергией). Если измерительная аппаратура линейна, то функциональная связь между $z\left(s\right)$ и $u\left(x\right)$ дается формулой
+	\begin{equation}
+		Az\equiv \int_{a}^{b}K\left(x,s\right)z\left(s\right)ds=u\left(x\right),
+		\label{7.2:fm_operator}
+	\end{equation}
+	где $a$ и $b$ --- границы спектра, $K\left(x,s\right)$ --- <<аппаратная функция>>, предполагаемая известной. $K\left(x,s\right)$ представляет собой экспериментальный спектр (по $x$), если на измерительную аппаратуру падает монохроматическое излучение частоты (энергии) $s$ и единичной интенсивности. Функцию $K\left(x,s\right)$ можно также рассматривать как отклик измерительного прибора на $\delta$-функцию, $z=\delta\left(\xi - s\right)$.
+	
+	Задача состоит в определении истинного спектра излучения $z\left(s\right)$ по экспериментальному спектру $u\left(x\right)$ и сводится к решению уравнения (\ref{7.2:fm_operator}) относительно $z\left(s\right)$.
+	
+	Рассмотрим математическую модель, задаваясь функцией $\overline{z}\left(s\right)$ и аппаратной функцией $K\left(x,s\right)$, близкими к функции $z_{exact}\left(s\right)$ и аппаратной функции в соответствующих практических задачах.
+	
+	Решая прямую задачу, вычислим <<экспериментальный>> спектр $\overline{u}\left(x\right)=\int_{a}^{b}K\left(x,s\right)\overline{z}\left(s\right)ds$ на сетке по $x$: $\left\{x_1,x_2,\ldots,x_n\right\}$. Моделируя процесс появления случайных ошибок при измерении экспериментального спектра $u\left(x\right)$, заменим $\overline{u}\left(x_i\right)$ на $\tilde{u}\left(x_i\right)$ по формулам
+	\begin{equation}
+		\tilde{u}\left(x_i\right)=\overline{u}\left(x_i\right)\left(1+\theta_i \sqrt{\frac{3\left(b-a\right)}{b^3 - a^3}}\sigma\right),
+	\end{equation}
+	где $\theta_i$ --- случайные числа из промежутка $\left(-1,1\right)$ с равномерным законом распределения. Очевидно, что среднее значение $\tilde{u}\left(x_i\right)$ равно $\overline{u}\left(x_i\right)$ и дисперсия $\tilde{u}\left(x_i\right)$ равна $\sigma^2$. Величина среднеквадратического отклонения
+	\begin{equation}
+		\norm{\tilde{u}\left(x\right)-\overline{u}\left(x\right)}=\left\{\int_{a}^{b}\left[\tilde{u}\left(x\right)-\overline{u}\left(x\right)\right]^2\right\}^{\frac{1}{2}}\approx \left[3\sigma^2 \frac{1}{n}\sum_{i}\theta_i^2\right]^{\frac{1}{2}}=\sigma
+	\end{equation}
+	является характеристикой точности исходных данных.
+	
+	Возьмем в качестве $\overline{z}\left(s\right)$  некоторую функцию, а $$K\left(x,s\right)=\left(1-\frac{s}{x}\right)\eta\left(x-s\right),$$ где $\eta\left(x-s\right)$ --- единичная функция. Берем $a=0$, $b=11$.
+	Вычисляем
+	\begin{equation}
+		\overline{u}\left(x\right)=\int_{0}^{11}K\left(x,s\right)\overline{z}\left(s\right)ds.
+	\end{equation}
+	Затем решаем уравнение
+	\begin{equation}
+		\int_{0}^{11}K\left(x,s\right)z\left(s\right)ds=\overline{u}\left(x\right)
+	\end{equation}
+	относительно $z\left(s\right)$.
+	
+	Заменяем последнее уравнение СЛАУ
+	\begin{equation}
+		\sum_{i=1}^{n}A_i K\left(x_i,x_j\right)z\left(x_j\right)\approx\overline{u}\left(x_i\right),
+	\end{equation}
+	аппроксимируя интеграл некоторой квадратурной формулой.
+		
+	\subsection*{LUP-разложение}
+	
+	\textbf{LUP}-разложение учитывает перестановки, когда осуществляется выбор главного элемента. В таком случае, матрица $\textbf{A}$ может быть представлена в виде
+	\begin{equation}
+		\textbf{PA}=\textbf{LU},
+	\end{equation}
+	где матрица $\textbf{P}$ --- матрица перестановок, получаемая путем осуществления перестановок в единичной матрице. В процессе составления матриц $\bold{P}$, $\bold{L}$ и $\bold{U}$, перестановки осуществляются в каждой из них.
+	
+	\subsubsection*{Пример}
+	Разложим матрицу
+	\begin{equation}
+		\bold{A}=\begin{pmatrix}
+			0 & 1 & 2 \\
+			3 & 4 & 5 \\
+			6 & 7 & 9 \\
+		\end{pmatrix}.
+	\end{equation}
+	
+	В результате имеем
+	\begin{equation}
+		\bold{P}=
+		\begin{pmatrix}
+			0 & 1 & 0 \\
+			1 & 0 & 0 \\
+			0 & 0 & 1 \\
+		\end{pmatrix},\quad
+		\bold{L}=
+		\begin{pmatrix}
+			1 & 0 & 0 \\
+			0 & 1 & 0 \\
+			2 & -1 & 1 \\
+		\end{pmatrix},\quad
+		\bold{U}=
+		\begin{pmatrix}
+			3 & 4 & 5 \\
+			0 & 1 & 2 \\
+			0 & 0 & 1 \\
+		\end{pmatrix}.
+	\end{equation}
+	
+    \subsection*{Задание}
+	
+	Используя наработки из предыдущей практической работы, модифицировать программу, выполняющую метод Гаусса, в том числе:
+	\begin{itemize}
+	    \item Определить матрицы $\bold{U}$ и $\bold{L}$, осуществить промежуточный вывод и проверку. Реализовать решение СЛАУ согласно (\ref{7.2:f23})--(\ref{7.2:f26}). Посчитать определитель.
+	    
+	    \item Определить матрицы $\bold{U}$, $\bold{L}$ и $\bold{P}$. Реализовать решение СЛАУ.
+	
+	    \item Решить систему вида (\ref{7.2:f24}) несколько раз, используя различные правые части. Для моделирования правых частей рекомендуется использовать вектор~$\bold{x}$, элементы которого имеют плотность
+	    \begin{equation}
+	        f_{\bold{x}}(x)=
+	        	\left\{{
+	        	\begin{matrix}
+	        		{\dfrac {1}{b-a}},&x\in [a,b]\\0,&x\not \in [a,b]
+	        	\end{matrix}}
+        		\right.,
+	    \end{equation}
+	    $a=-10, b=10$.
+	    
+	    \item Сравнить число арифметических операций.
+	\end{itemize}
+
+    \renewcommand{\bibname}{{Список литературы}}
+    \bibliographystyle{gost2008}
+    \begin{thebibliography}{4}
+        \bibitem{lebedeva}
+        Лебедева А. В., Пакулина А. Н. Практикум по методам вычислений. Часть 1. Учебно-методическое пособие. СПб.: Санкт-Петербургский государственный университет, 2021.~156 с.
+        
+        \bibitem{Mis}
+        Мысовских И. П. Лекции по методам вычислений: Учебное пособие. СПб.: Издательство Санкт-Петербургского университета, 1998. 472~с.
+        
+        \bibitem{Fadeev}
+        Фаддеев Д. К., Фаддеева В. Н. Вычислительные методы линейной алгебры. М.:  Государственное издательство физико-математической литературы, 1960. 655 с.
+        
+       	\bibitem{tih_ars}
+        Тихонов А. Н., Арсенин В. Я. Методы решения некорректных задач. Учебное пособие для вузов. Изд. 3-е, исправленное. М.: Наука, 1986. 288 с.
+    \end{thebibliography}
+\end{document}

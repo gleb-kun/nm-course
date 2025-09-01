@@ -1,0 +1,176 @@
+\documentclass[12pt]{article}
+
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{array,graphicx,dcolumn,multirow,abstract,hanging,fancyhdr,float}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{indentfirst}
+
+\DeclareMathOperator{\cond}{cond}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+
+
+\begin{document}
+    \begin{flushright}
+    {v0.4.2}
+    \end{flushright}
+    \begin{flushright}
+	{01.09.2025}
+	\end{flushright}
+    \section*{Вычислительный практикум}
+    \section*{Практическое занятие \#7.1. Метод Гаусса}
+
+    \subsection*{Общая информация}
+
+    Рассмотрим процедуру метода Гаусса в общем виде. Дана система линейных алгебраических уравнений (СЛАУ) порядка~$n$
+    \begin{equation}
+        \begin{gathered}
+        	\begin{cases}
+        		a_{11}^{\left(0\right)}x_1+a_{12}^{\left(0\right)}x_2+\ldots+a_{1n}^{\left(0\right)}x_n=b_{1}^{\left(0\right)}\\
+        		a_{21}^{\left(0\right)}x_1+a_{22}^{\left(0\right)}x_2+\ldots+a_{2n}^{\left(0\right)}x_n=b_{2}^{\left(0\right)}\\
+        		\ldots\\
+        		a_{n1}^{\left(0\right)}x_1+a_{n2}^{\left(0\right)}x_2+\ldots+a_{nn}^{\left(0\right)}x_n=b_{n}^{\left(0\right)}
+        	\end{cases}.
+        \end{gathered}\label{7.1:f1}
+    \end{equation}
+
+    Предположим, что коэффициент $a_{11}^{\left(0\right)}$, называемый \emph{ведущим элементом} первой строки, не равен нулю.
+
+    Найдем величины
+    \begin{equation}
+        \mu_{i1} = \frac{a^{\left(0\right)}_{i1}}{a^{\left(0\right)}_{11}},\quad i=2,3,\ldots, n.\label{7.1:f2}
+    \end{equation}
+    
+
+    Далее исключаем неизвестную $x_1$ из каждого уравнения системы, начиная со второго. Для этого вычитаем из второго, третьего$,\ldots, n$-го уравнения системы (\ref{7.1:f1}) первое уравнение умноженное на коэффициент $\mu_{21}$, $\mu_{31},\ldots, \mu_{n1}$ соответственно. Преобразованная система уравнений имеет вид
+    \begin{equation}
+    	\begin{cases}
+    		a_{11}^{\left(0\right)}x_1+a_{12}^{\left(0\right)}x_2+a_{13}^{\left(0\right)}x_3+\ldots+a_{1n}^{\left(0\right)}x_n=b_1^{\left(0\right)}\\
+    		\hspace{15.3mm} a_{22}^{\left(1\right)}x_2+a_{23}^{\left(1\right)}x_3+\ldots+a_{2n}^{\left(1\right)}x_n=b_{2}^{\left(1\right)}\\
+    		\hspace{15.3mm}\ldots\\
+    		\hspace{15.3mm} a_{n2}^{\left(1\right)}x_2+a_{n3}^{\left(1\right)}x_3+\ldots+a_{nn}^{\left(1\right)}x_n=b_{n}^{\left(1\right)}\\
+    	\end{cases},
+    	\label{7.1:f3}
+    \end{equation}
+    где
+    \begin{equation}
+        a_{ij}^{\left(1\right)}=a_{ij}^{\left(0\right)}-\mu_{i1}\cdot a^{\left(0\right)}_{1j},\quad b_{i}^{\left(1\right)}=b_{i}^{\left(0\right)}-\mu_{i1}{b^{\left(0\right)}_{1}},\quad i,j=2,3,\ldots,n.\label{7.1:f4_1}
+    \end{equation}
+    Поступаем аналогично со следующим уравнением из преобразованной системы. В конечном итоге приводим исходную систему к эквивалентной системе
+    \begin{equation}
+    	\begin{cases}
+    		a_{11}^{\left(0\right)}x_1+a_{12}^{\left(0\right)}x_2+a_{13}^{\left(0\right)}x_3+\ldots+a_{1n}^{\left(0\right)}x_n=b_1^{\left(0\right)}\\
+    		\hspace{15.3mm} a_{22}^{\left(1\right)}x_2+a_{23}^{\left(1\right)}x_3+\ldots+a_{2n}^{\left(1\right)}x_n=b_{2}^{\left(1\right)}\\
+    		\hspace{15.3mm}\ldots\\
+    		\hspace{47.5mm} a_{nn}^{\left(n-1\right)}x_n=b_{n}^{\left(n-1\right)}\\
+    	\end{cases}
+    	\label{7.1:f4}
+    \end{equation}
+    с верхней треугольной матрицей $\bold{A}^{\left(n-1\right)}$.
+    
+    Далее обратным ходом из системы (\ref{7.1:f4}) последовательно находим неизвестные $x_n$, $x_{n-1}$, $\ldots$,~$x_1$.
+
+    \subsection*{Число арифметических операций в методе Гаусса}
+
+    Узнаем количество арифметических операций, выполняемых при решении СЛАУ порядка $n$.
+
+    Вычисления 1-го шага прямого хода с использованием формул (\ref{7.1:f2}) и~(\ref{7.1:f4_1}) требуют выполнения $n-1$ делений, $\left(n-1\right)n$ умножений и $\left(n-1\right)n$ вычитаний, таким образом общее число арифметических операций, выполняемых на первом шаге, равно
+    \begin{equation}
+        Q_1=2\left(n-1\right)^2+3\left(n-1\right).
+    \end{equation}
+    Аналогично, на втором шаге требуется операций
+    \begin{equation}
+        Q_2=2\left(n-2\right)^2+3\left(n-2\right).
+    \end{equation} 
+    Не трудно догадаться, что для исключения неизвестной $x_i$ надо затратить операций
+    \begin{equation}
+        Q_i=2\left(n-i\right)^2+3\left(n-i\right).
+    \end{equation}
+
+    Подсчитаем общее число необходимых арифметических операций в прямом ходе
+    \begin{equation}
+        \begin{gathered}
+            Q_{\text{forward}}=\sum^{n-1}_{i=1}Q_i=2\sum_{i=1}^{n-1}\left(n-i\right)^2+3\sum_{i=1}^{n-1}\left(n-i\right)=2\sum_{i=1}^{n-1}i^2+3\sum_{i=1}^{n-1}i=\\=\frac{2\left(n-1\right)n\left(2n-1\right)}{6}+\frac{3\left(n-1\right)n}{2}=\frac{2}{3}n^3+\frac{1}{2}n^2-\frac{7}{6}n.
+        \end{gathered}
+    \end{equation}
+    Число необходимых арифметических действий в обратном ходе
+    \begin{equation}
+        Q_{\text{backward}}=n^2,
+    \end{equation}
+
+    Таким образом общее количество арифметических операций при решении СЛАУ методом Гаусса будет
+    \begin{equation}
+        Q=Q_{\text{forward}}+Q_{\text{backward}}=\frac{2}{3}n^3+\frac{3}{2}n^2-\frac{7}{6}n\approx\frac{2}{3}n^3.
+    \end{equation}
+
+    \subsection*{Вычисление определителей}
+
+    Определитель матрицы при делении ее строки на ведущий элемент также делится на этот элемент, а при вычитании строки, умноженной на любое число, как известно, определитель новой матрицы равен определителю старой.
+    Если каждую строку треугольной матрицы $\bold{A}^{\left(n-1\right)}$, полученной в ходе прямого хода метода Гаусса, разделить на соответствующий ведущий элемент $a_{{ii}}^{\left(i-1\right)}$, то ее определитель равен 1. Он получен в результате деления определителя $\det\left(\bold{A}\right)$ исходной матрицы $\bold{A}=\bold{A}^{\left(0\right)}$ системы~(\ref{7.1:f1}) на ведущие элементы на каждом шаге: $a_{11}^{\left(0\right)}$, $a_{22}^{\left(1\right)}$, $\ldots$, $a_{nn}^{\left(n-1\right)}$. Следовательно, если ни один из ведущих элементов не равен нулю, то
+    \begin{equation}
+        \det\left(\bold{A}\right)
+        =a_{11}^{\left(0\right)}\cdot a_{22}^{\left(1\right)}\cdot\ldots\cdot a_{nn}^{\left(n-1\right)}.
+    \end{equation}
+
+    Таким образом попутно при решении системы методом Гаусса можно вычислить определитель матрицы системы линейных алгебраических уравнений.
+
+    \subsection*{Выбор главного элемента}
+
+    Во избежание деления на малый ведущий элемент рекомендуется осуществлять выбор наибольшего по модулю элемента и считать его ведущим (подробнее см. в \cite{lebedeva}).
+
+    \subsection*{Обращение матриц}
+    Для нахождения матрицы $\bold{A}^{-1}$ формально требуется решить $n$ систем, векторы правых частей которых представляют собой единичные орты. Однако, чтобы не осуществлять прямой ход $n$ раз, можно все преобразования делать в расширенной матрице размера $n \times 2n$ вида $\left(\bold{A},\bold{E}\right)$, просто расширив циклы по $j$ до значения $2n$ включительно.
+
+    \subsection*{Задание}
+	
+	\begin{enumerate}
+	    \item Разработать программу, которая реализует решение СЛАУ методом Гаусса, в том числе выполнить:
+	    
+	    \begin{itemize}
+	        \item предварительную оценку системы (сделать выводы),
+	        \item реализовать в методе выбор главного элемента: по столбцу, по строке, по столбцу и строке;
+	        \item посчитать количество операций, и сравнить с тем, что указано в теоретической справке,
+	        \item найти определитель матрицы коэффициентов СЛАУ.
+	    \end{itemize}
+	        
+	    \item Рассмотреть систему $\bold{Ax}=\bold{b}$, в которой
+	    \begin{equation}
+	        \bold{A}_{ij}=\frac{1}{i+j-1},\quad i,j=1,2,\ldots,n.
+	    \end{equation}
+	    Положить точное решение этой СЛАУ
+	    \begin{equation}
+	        \bold{x}=\begin{pmatrix}
+	            x_1 \\
+	            x_2 \\
+	             \vdots \\
+	            x_n \\
+	        \end{pmatrix}=
+	        \begin{pmatrix}
+	            1 \\
+	            1 \\
+	             \vdots \\
+	             1
+	        \end{pmatrix},
+	    \end{equation}
+	    из него найти правую часть $\bold{b}$. С учетом найденной правой части попробовать решить получившуюся СЛАУ относительно неизвестного вектора $\bold{x}$. Провести эксперимент при различных $n$.
+	\end{enumerate}
+	
+    Программу рекомендуется разрабатывать на языках C/С++, python, можно использовать и любой другой язык, или даже математический пакет, но предпочтительнее будут первые варианты.
+
+    \renewcommand{\bibname}{{Список литературы}}
+    \bibliographystyle{gost2008}
+    \begin{thebibliography}{3}
+        \bibitem{lebedeva}
+        Лебедева А. В., Пакулина А. Н. Практикум по методам вычислений. Часть 1. Учебно-методическое пособие. СПб.: Санкт-Петербургский государственный университет, 2021.~156 с.
+
+        \bibitem{Mis}
+        Мысовских И. П. Лекции по методам вычислений: Учебное пособие. СПб.: Издательство Санкт-Петербургского университета, 1998. 472~с.
+        
+        \bibitem{Fadeev}
+        Фаддеев Д. К., Фаддеева В. Н. Вычислительные методы линейной алгебры. М.:  Государственное издательство физико-математической литературы, 1960. 655 с.
+        
+    \end{thebibliography}
+\end{document}

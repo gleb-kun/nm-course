@@ -1,0 +1,181 @@
+\documentclass[12pt]{article}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{array,graphicx,dcolumn,multirow,abstract,hanging,fancyhdr,float}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{indentfirst}
+
+\DeclareMathOperator{\cond}{cond}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+
+
+\begin{document}
+	\begin{flushright}
+		% create_version
+		{v0.0.2}
+	\end{flushright}
+	\begin{flushright}
+		% create_date
+		{01.09.2025}
+	\end{flushright}
+	\section*{Вычислительный практикум}
+	\section*{Практическое занятие \#7.0. Нормы, обусловленность матриц, обращение матриц и прочее}
+	
+	\subsection*{Векторные и матричные нормы}
+	Квадратные матрицы размерности $n\times n$ и векторы размерности $n$ представляют собой линейные нормированные пространства, в которых тем или иным способом можно ввести норму.
+	
+	На практике чаще всего используют следующие нормы $n$-мерных векторов $\bold{x}=\left(x_1,x_2,\ldots,x_n\right)$ из линейного пространства~$R^n$:
+	
+	\begin{equation}
+		\norm{\bold{x}}_p=\left(\sum_{i=1}^{n}\left|x_i\right|^p\right)^{1/p},\quad p\geqslant 1,
+	\end{equation}
+	отсюда
+	\begin{equation}
+		\norm{\bold{x}}_1=\sum_{i=1}^{n}\left|x_i\right|,
+	\end{equation}
+	\begin{equation}
+		\norm{\bold{x}}_2=\left(\bold{x},\bold{x}\right)^{1/2}=\sqrt{\sum_{i=1}^n x^2_i},
+	\end{equation}
+	\begin{equation}
+		\norm{\bold{x}}_{\infty}=\max_{1\leqslant i \leqslant n}\left|x_i\right|.
+	\end{equation}
+	
+	Эти нормы удовлетворяют неравенству
+	\begin{equation}
+		\norm{\bold{x}}_{\infty}\leqslant\norm{\bold{x}}_2\leqslant\norm{\bold{x}}_1\leqslant n\norm{\bold{x}}_{\infty}.
+	\end{equation}
+	
+	В линейном пространстве квадратичных числовых матриц $n$-го порядка
+	\begin{equation}
+		\bold{A}=
+		\begin{pmatrix}
+			a_{11} & a_{12} & \cdots & a_{1n} \\
+			a_{21} & a_{22} & \cdots & a_{2n} \\
+			\vdots & \vdots & \ddots & \vdots \\
+			a_{n1} & a_{n2} & \cdots & a_{nn} \\
+		\end{pmatrix}
+	\end{equation}
+	зададим норму следующим образом
+	\begin{equation}
+		\norm{\bold{A}}=\max_{\bold{x}\neq 0}\frac{\norm{\bold{Ax}}}{\norm{\bold{x}}},\label{7.0:fm18}
+	\end{equation}
+	где $\norm{\cdot}$ --- одна из введенных норм выше. Заданная по формуле (\ref{7.0:fm18}) норма матрицы называется \emph{согласованной} с нормой вектора или \emph{подчиненной} векторной норме.
+	
+	В частности норма единичной матрицы $\bold{E}$ равна единице:
+	\begin{equation}
+		\norm{\bold{Ex}}=\left|\bold{x}\right| \Rightarrow \max_{\bold{x}\neq 0}\frac{\norm{\bold{Ax}}}{\norm{\bold{x}}}=1.
+	\end{equation}
+	Можно показать, что
+	\begin{equation}
+		\norm{\bold{A}}_1=\max_{1\leqslant j\leqslant n}\sum_{i=1}^n\left|a_{ij}\right|,
+	\end{equation}
+	\begin{equation}
+		\norm{\bold{A}}_2=\max_{1\leqslant j\leqslant n}\sqrt{\lambda_j\left(\bold{A}^T\bold{A}\right)},
+	\end{equation}
+	\begin{equation}
+		\norm{\bold{A}}_{\infty}=\max_{1\leqslant i \leqslant n}\sum_{j=1}^{n}\left|a_{ij}\right|.
+	\end{equation}
+	Если матрица $\bold{A}$ симметричная, то есть $\bold{A}=\bold{A}^T$, где $\bold{A}^{T}$ --- транспонированная матрица, полученная из матрицы $\bold{A}$, то
+	\begin{equation}
+		\norm{\bold{A}}_2=\max_{1\leqslant i \leqslant n }\left|\lambda_i\right|,\quad
+		\norm{\bold{A}^{-1}}_2=\frac{1}{\min_{1\leqslant i \leqslant n}\left|\lambda_i\right|},
+	\end{equation}
+	где $\lambda_i$ --- собственное число матрицы $\bold{A}$.
+	
+	Норма Фробениуса (евклидова норма)
+	\begin{equation}
+		\norm{\bold{A}}_F=\norm{\bold{A}}_E=\sqrt{\sum_{i,j=1}^{n}\left|a_{ij}\right|^2},
+	\end{equation}
+	\begin{equation}
+		\norm{\bold{A}}_2\leqslant\norm{\bold{A}}_E.
+	\end{equation}
+	
+	Согласно (\ref{7.0:fm18}) для любого $\bold{x} \neq 0$ имеем
+	\begin{equation}
+		\norm{\bold{Ax}}\leqslant\norm{\bold{A}}\cdot \norm{\bold{x}},\label{7.0:fm23}
+	\end{equation}
+	причем можно доказать, что существует $\bold{x}\neq 0$, для которого (\ref{7.0:fm23}) обращается в равенство.
+	На основании (\ref{7.0:fm23}) для любого $\bold{x} \in R^n$ выполняются неравенства
+	\begin{equation}
+		\norm{\bold{ABx}}=\norm{\bold{A}\left(\bold{Bx}\right)}\leqslant \norm{\bold{A}}\cdot\norm{\bold{Bx}}\leqslant\norm{\bold{A}}\cdot\norm{\bold{B}}\cdot\norm{\bold{x}},
+	\end{equation}
+	а отсюда
+	\begin{equation}
+		\begin{gathered}
+			\norm{\bold{A}^2\bold{x}}\leqslant\norm{\bold{A}}^2\cdot \norm{\bold{x}} \\
+			\cdots\\
+			\norm{\bold{A}^k\bold{x}}\leqslant\norm{\bold{A}}^k\cdot \norm{\bold{x}}
+		\end{gathered}
+	\end{equation}
+	то есть
+	\begin{equation}
+		\norm{\bold{A}^k}\leqslant\norm{\bold{A}}^k.
+	\end{equation}
+	
+	\subsection*{Обращение матриц}
+	Для нахождения матрицы $\bold{A}^{-1}$ формально требуется решить $n$ систем, векторы правых частей которых представляют собой единичные орты. Однако, чтобы не осуществлять прямой ход $n$ раз, можно все преобразования делать в расширенной матрице размера $n \times 2n$ вида $\left(\bold{A},\bold{E}\right)$, просто расширив циклы по $j$ до значения $2n$ включительно.
+	
+	\subsection*{Обусловленность матриц}
+	
+	Рассмотрим систему линейных алгебраических уравнений
+	\begin{equation}
+		\bold{Ax}=\bold{b},\label{7.0:fm27}
+	\end{equation}
+	в которой $\det \bold{A} \neq 0$, $\bold{b}\neq 0$. Эта система имеет единственное решение $\bold{x}~\neq~0$. На практике ее решение получается не точным в связи с округлениями, имеющими место при выполнении арифметических действий над числами с плавающей точкой.
+	
+	Вычислительные задачи, в которых сколь угодно малые погрешности в вычислениях влекут за собой сколь угодно большие погрешности в решении --- называются плохо обусловленными. Пусть решением системы~(\ref{7.0:fm27}) является вектор $\tilde{\bold{x}}=\left(\tilde{x}_1, \tilde{x}_2,\ldots, \tilde{x}_n\right)^T$. Для относительной погрешности решения $\dfrac{\norm{\Delta\bold{x}}}{\norm{\tilde{\bold{x}}}}$ системы
+	\begin{equation}
+		\left(\bold{A}+\Delta\bold{A}\right)\left(\tilde{\bold{x}}+\Delta \bold{x}\right)=\bold{b}+\Delta\bold{b},
+	\end{equation}
+	с предположением, что $\norm{\bold{A}^{-1}}\cdot\norm{\Delta\bold{A}}<1$,
+	справедлива оценка
+	\begin{equation}
+		\dfrac{\norm{\Delta \bold{x}}}{\norm{\tilde{\bold{x}}}}\leqslant\dfrac{\mu\left(\bold{A}\right)}{1-\mu\left(\bold{A}\right)\dfrac{\norm{\Delta \bold{A}}}{\norm{\bold{A}}}}\left(\dfrac{\norm{\Delta \bold{b}}}{\norm{\bold{b}}}+\dfrac{\norm{\Delta \bold{A}}}{\norm{\bold{A}}}\right).
+	\end{equation}
+	
+	Величина
+	\begin{equation}
+		\mu\left(\bold{A}\right)=\cond \bold{A}=\norm{\bold{A}}\cdot\norm{\bold{A}^{-1}}\geqslant 1
+	\end{equation}
+	называется \emph{числом обусловленности} матрицы $\bold{A}$. Оно равна максимально возможному коэффициенту усиления относительной погрешности от правой части или матрицы $\bold{A}$ к решению системы (\ref{7.0:fm27}). Число обусловленности матрицы зависит от выбранной нормы.
+	
+	Если $\bold{A}$ --- симметричная и выбрана вторая норма $\norm{\bold{A}}_2=\max_{1\leqslant i \leqslant n }\left|\lambda_i\right|$, то
+	\begin{equation}
+		\mu\left(\bold{A}\right)=\frac{\max_{1\leqslant i \leqslant n }\left|\lambda_i\right|}{\min_{1\leqslant i \leqslant n }\left|\lambda_i\right|}.
+	\end{equation}
+	
+	Если число обусловленности $\mu\left(\bold{A}\right)$ велико, то матрица $\bold{A}$ (или система~(\ref{7.0:fm27})) называется плохо обусловленной, а если $\mu\left(\bold{A}\right)$ невелико, то хорошо обсуловленной.
+	
+	Таким образом, чем меньше $\mu\left(\bold{A} \right)$, тем <<лучше>>. Учитывая, что\linebreak $\mu\left(\bold{A} \right)\geqslant 1$, то наилучшим числом обусловленности является~1.
+	
+	\subsection*{Задание}
+	
+	Задание носит подготовительный характер, к последующим заданиям, поэтому рекомендуется выполнить его аккуратно, для упрощения свой жизни при выполнении последующих заданий.
+	
+	Необходимо разработать программу, со следующими компонентами:
+	\begin{itemize}
+		\item классы для матриц и векторов;
+		\item функции для нахождения векторных норм 1, 2, $\infty$, а также подчиненных им матричных норм;
+		\item функции с основными операциями для матриц и векторов: сложение/умножение, транспонирование и так далее;
+		\item функция для нахождения обратной матрицы (см. задание \#7.1);
+		\item функция для вычисления числа обусловленности.
+	\end{itemize}
+	
+	Программу рекомендуется разрабатывать на языках C/С++, python, можно использовать и любой другой язык, или даже математический пакет, но предпочтительнее будут первые варианты.
+	
+	\renewcommand{\bibname}{{Список литературы}}
+	\bibliographystyle{gost2008}
+	\begin{thebibliography}{3}
+		\bibitem{lebedeva}
+		Лебедева А. В., Пакулина А. Н. Практикум по методам вычислений. Часть 1. Учебно-методическое пособие. СПб.: Санкт-Петербургский государственный университет, 2021.~156 с.
+		
+		\bibitem{Mis}
+		Мысовских И. П. Лекции по методам вычислений: Учебное пособие. СПб.: Издательство Санкт-Петербургского университета, 1998. 472~с.
+		
+		\bibitem{Fadeev}
+		Фаддеев Д. К., Фаддеева В. Н. Вычислительные методы линейной алгебры. М.:  Государственное издательство физико-математической литературы, 1960. 655 с.
+	\end{thebibliography}
+\end{document}
