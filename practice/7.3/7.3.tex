@@ -1,0 +1,118 @@
+\documentclass[12pt]{article}
+
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{array,graphicx,dcolumn,multirow,abstract,hanging,fancyhdr,float}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{indentfirst}
+
+\DeclareMathOperator{\cond}{cond}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+
+
+\begin{document}
+    \begin{flushright}
+    	%%.{version}.%%
+    \end{flushright}
+     \begin{flushright}
+    	%%.{date}.%%
+    \end{flushright}
+    \section*{Вычислительный практикум}
+    \section*{Практическое занятие \#7.3. Метод Холецкого (метод квадратных корней)}
+
+    \subsection*{Общая информация}
+
+    Пусть требуется решить систему линейных алгебраических уравнений
+    \begin{equation}
+        \bold{A}\bold{x}=\bold{b},\label{f1}
+    \end{equation}
+    с симметричной положительно определенной матрицей $\bold{A}$.
+
+    В основе метода лежит алгоритм построения специального $\bold{LU}$-разло-\linebreak жения матрицы $\bold{A}$, в результате чего она приводится к виду
+    \begin{equation}
+        \bold{A}=\bold{LL}^{T}.\label{f2}
+    \end{equation}
+
+    В разложении Холецкого нижняя треугольная матрица
+    \begin{equation}
+        \bold{L}=
+        \begin{bmatrix}
+            l_{11} & 0 & \ldots & 0 \\
+            l_{21} & l_{22} & \ldots & 0 \\
+            \vdots & \vdots & \ddots & \vdots \\
+            l_{n1} & l_{n2} & \ldots & l_{nn}
+        \end{bmatrix}
+    \end{equation}
+    не обязательно должна иметь на главной диагонали единицы, как это было в методе Гаусса, а требуется только, чтобы диагональные элементы~$l_{ii}$ были положительными.
+
+    Если разложение (\ref{f2}) получено, то решение системы~(\ref{f1}) сводится к последовательному решению двух систем с треугольными матрицами
+    \begin{equation}
+        \bold{L}\bold{y}=\bold{b},\quad \bold{L}^{T}\bold{x}=\bold{y}.\label{f4}
+    \end{equation}
+    Для решения такой системы требуется выполнить примерно $2n^2$ арифметических операций.
+
+    Найдем элементы матрицы $\bold{L}$. Для этого вычислим элементы матрицы $\bold{LL}^{T}$ и приравняем к соответствующим элементам матрицы $\bold{A}$. В результате получим систему уравнений
+    \begin{equation}
+        \begin{array}{l}
+        	l_{11}^2 = a_{11}, \\[6pt]
+        	l_{i1}l_{11} = a_{i1}, \quad i = 2,3,\ldots,n, \\[6pt]
+        	l_{21}^2 + l_{22}^2 = a_{22}, \\[6pt]
+        	l_{i1}l_{21} + l_{i2}l_{22} = a_{i2}, \quad i=3,4,\ldots,n, \\[6pt]
+        	\ldots \\[6pt]
+        	l_{k1}^2 + l_{k2}^2 + \ldots + l_{kk}^2 = a_{kk}, \\[6pt]
+        	l_{i1}l_{k1} + l_{i2}l_{k2} + \ldots + l_{ik}l_{kk} = a_{ik}, \quad i=k+1,\ldots,n, \\[6pt]
+        	\ldots \\[6pt]
+        	l_{n1}^2 + l_{n2}^2 + \ldots + l^2_{nn} = a_{nn}.
+        \end{array}
+		\label{f5}
+    \end{equation}
+    Решая систему (\ref{f5}), последовательно находим
+    \begin{equation}
+		\begin{array}{l}
+			l_{11} = \sqrt{a_{11}}, \\[6pt]
+			l_{i1} = a_{i1}/l_{11}, \quad i = 2,3,\ldots,n, \\[6pt]
+			l_{22} = \sqrt{a_{22} - l_{21}^2}, \\[6pt]
+			l_{i2} = \dfrac{a_{i2} - l_{i1}l_{21}}{l_{22}}, \\[6pt]
+			\ldots \\[6pt]
+			l_{kk} = \sqrt{a_{kk} - l_{k1}^2 - l_{k2}^2 - \ldots - l_{k,k-1}^2}, \\[6pt]
+			l_{ik} = \dfrac{a_{ik} - l_{i1}l_{k1} - l_{i2}l_{k2} - \ldots - l_{i,k-1}l_{k,k-1}}{l_{kk}},
+			\quad i = k+1,\ldots,n, \\[6pt]
+			\ldots \\[6pt]
+			l_{nn} = \sqrt{a_{nn} - l^2_{n1} - l^2_{n2} - \ldots - l^2_{n,n-1}}.
+		\end{array}
+		\label{f6}
+    \end{equation}
+
+    Число операций, выполняемых в ходе вычисления разложения (\ref{f2}) по формулам (\ref{f6}), равно примерно $n^3/3$. Учитывая, что для решения систем~(\ref{f4}) требуется примерно $2n^2$ операций, убеждаемся, что при больших $n$ метод Холецкого требует вдвое меньше вычислительных затрат по сравнению с методом Гаусса.
+    
+    \subsection*{Задание}
+
+    \begin{itemize}
+        \item Смоделировать несколько вариантов входных данных (СЛАУ):
+        \begin{itemize}
+        	\item так, чтобы СЛАУ могла быть решена с использованием метода Холецкого;
+        	\item так, чтобы СЛАУ нельзя было решить с использованием метода Холецкого;
+        	\item дать теоретическое обоснование.
+        \end{itemize}
+        Требуемая размерность матрицы $\bold{A}$: $5 \times 5$ или больше.
+        \item Реализовать метод Холецкого.
+        \item Решить СЛАУ в соответствии с вариантом.
+        \item Оценить число операций и сравнить с другими методами.
+    \end{itemize}
+
+    \renewcommand{\bibname}{{Список литературы}}
+    \bibliographystyle{gost2008}
+    \begin{thebibliography}{3}
+		\bibitem{lebedeva}
+		Лебедева А. В., Пакулина А. Н. Практикум по методам вычислений. Часть 1. Учебно-методическое пособие. СПб.: Санкт-Петербургский государственный университет, 2021.~156 с.
+		
+		\bibitem{Mis}
+		Мысовских И. П. Лекции по методам вычислений: Учебное пособие. СПб.: Издательство Санкт-Петербургского университета, 1998. 472~с.
+		
+		\bibitem{Fadeev}
+		Фаддеев Д. К., Фаддеева В. Н. Вычислительные методы линейной алгебры. М.:  Государственное издательство физико-математической литературы, 1960. 655 с.
+    \end{thebibliography}
+\end{document}
