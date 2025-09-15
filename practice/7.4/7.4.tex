@@ -1,0 +1,214 @@
+\documentclass[12pt]{article}
+
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{array,graphicx,dcolumn,multirow,abstract,hanging,fancyhdr,float}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{indentfirst}
+
+\newtheorem{theorem}{Теорема}
+
+\DeclareMathOperator{\cond}{cond}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+
+
+\begin{document}
+    \begin{flushright}
+	    %%.{version}.%%
+    \end{flushright}
+    \begin{flushright}
+    	%%.{date}.%%
+    \end{flushright}
+    \section*{Вычислительный практикум}
+    \section*{Практическое занятие \#7.4. Метод прогонки (алгоритм Томаса)}
+
+    \subsection*{Общие сведения}
+
+    Метод прогонки --- простой и эффективный алгоритм решения СЛАУ
+    \begin{equation}
+        \bold{A}\bold{x}=\bold{d},\label{f1}
+    \end{equation}
+    с трехдиагональными матрицами:
+    \begin{equation}
+        \bold{A}=
+        \begin{pmatrix}
+        b_{1}&c_{1}&0&0&\ldots&0&0&0&0\\
+        a_{2}&b_{2}&c_{2}&0&\ldots&0&0&0&0\\
+        0&a_{3}&b_{3}&c_{3}&\ldots &0&0&0&0 \\
+        &\\
+        &&&\ddots&\ddots&\ddots&\\
+        &\\
+        0&0&0&0&\ldots & a_{n-2} &b_{n-2} & c_{n-2} & 0\\
+        0&0&0&0&\ldots & 0 & a_{n-1} & b_{n-1} & c_{n-1}\\
+        0&0&0&0&\ldots & 0 & 0 & a_{n}&b_{n}
+        \end{pmatrix}.\quad
+        \bold{d}=
+        \begin{pmatrix}
+            d_1 \\
+            d_2 \\
+            d_3 \\
+            \\
+            \vdots \\
+            \\
+            d_{n-2} \\
+            d_{n-1} \\
+            d_{n}
+        \end{pmatrix}.
+    \end{equation}
+
+    Системы такого вида часто возникают при решении различных задач, например задач математической физики.
+    
+    \subsection*{Зачем это нужно?}
+    
+    Рассмотрим обыкновенное дифференциальное уравнение
+    \begin{equation}
+    	\left\{
+    	\begin{matrix}
+    			-u^{\prime\prime}+u=f,\quad 0<x<1,\\
+    			u\left(0\right)=a, \quad u\left(1\right)=b.
+    	\end{matrix}
+    	\right.
+    \end{equation}
+    Зададим сетку узлов $\left\{x_i\right\} : x_0 < x_1 < \ldots < x_n$ с шагом $h=\frac{1}{n}$. Аппроксимируем вторую производную
+    \begin{equation}
+    	u^{\prime\prime}\left(x_k\right)= \frac{u\left(x_{k-1}\right)-2u\left(x_k\right)+u\left(x_{k+1}\right)}{h^2}-\frac{h^2}{12}u^{\left(4\right)}\left(\xi\right),\quad \xi\in\left(x_{k-1},x_{k+1}\right),
+    \end{equation}
+    тогда
+    \begin{equation}
+    	\begin{gathered}
+    	-\frac{u\left(x_{k-1}\right)-2u\left(x_k\right)+u\left(x_{k+1}\right)}{h^2}+u\left(x_k\right)=f\left(x_k\right),\quad k=1,2,\ldots,n-1,\\ u\left(x_0\right)=a,\quad u\left(x_n\right)=b.
+    	\end{gathered}
+    \end{equation}
+    В матричной форме
+    \begin{equation}
+    	\bold{A}=\begin{pmatrix}
+    		1 & 0 & 0 & 0 & 0 & \ldots & 0 \\
+    		-\frac{1}{h^2} & 1+\frac{2}{h^2} & -\frac{1}{h^2} & 0 & 0 & \ldots & 0 \\
+    		0 & -\frac{1}{h^2} & 1+\frac{2}{h^2} & -\frac{1}{h^2} & 0 & \ldots & 0 \\
+    		\vdots & \vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\
+    		0 & 0 & 0 & 0 & 0 & \ldots & 1
+    	\end{pmatrix},
+    	\bold{x}=\begin{pmatrix}
+    		u\left(x_0\right) \\
+    		u\left(x_1\right) \\
+    		\vdots \\
+    		u\left(x_n\right)
+    	\end{pmatrix},
+    	\bold{d}=\begin{pmatrix}
+    		a \\
+    		f\left(x_1\right) \\
+    		f\left(x_2\right) \\
+    		\vdots \\
+    		f\left(x_{n-1}\right) \\
+    		b
+    	\end{pmatrix}.
+    \end{equation}
+
+    \subsection*{Вывод расчетных формул}
+
+    Преобразуем первое уравнение системы (\ref{f1}) к виду
+    \begin{equation}
+        x_1=\alpha_1 x_2+\beta_1,
+    \end{equation}
+    где $\alpha_1=-c_1/b_1$, $\beta_1=d_1/b_1$.
+
+    Подставим полученное для $x_1$ выражение во второе уравнение системы:
+    \begin{equation}
+        a_2\left(\alpha_1 x_2+\beta_1\right)+b_2 x_2+c_2 x_3 = d_2.\label{f4}
+    \end{equation}
+    Преобразуем уравнение (\ref{f4}) к виду
+    \begin{equation}
+        x_2=\alpha_2 x_3 +\beta_2,\label{f5}
+    \end{equation}
+    где $\alpha_2=-c_2/\left(b_2+a_2\alpha_1\right),$ $\beta_2=\left(d_2-a_2\beta_1\right)/\left(b_2+a_2\alpha_1\right)$.
+    Выражение (\ref{f5}) подставляется в третье уравнение системы и т.~д.
+
+    На $i$-м шаге $\left(1<i<n\right)$ этого процесса $i$-е уравнение системы преобразуется к виду
+    \begin{equation}
+        x_i=\alpha_i x_{i+1}+\beta_i,
+    \end{equation}
+    где $\alpha_i=-c_i/\left(b_i+a_i \alpha_{i-1}\right)$, $\beta_i=\left(d_i-a_i\beta_{i-1}\right)/\left(b_i+a_i\alpha_{i-1}\right)$.
+
+    На $n$-м шаге подстановка в последнее уравнение выражения $$x_{n-1}=\alpha_{n-1}x_n+\beta_{n-1}$$ дает
+    \begin{equation}
+        a_n\left(\alpha_{n-1}x_n+\beta_{n-1}\right)+b_n x_n =d_n.
+    \end{equation}
+    Откуда можно определить значение $x_n$:
+    \begin{equation}
+        x_n=\beta_n=\left(d_n-a_n\beta_{n-1}\right)/\left(b_n+a_n\alpha_{n-1}\right).
+    \end{equation}
+
+    \subsection*{Алгоритм прогонки}
+    Полученные формулы позволяют организовать вычисления метода прогонки в два этапа.
+
+    \begin{enumerate}
+        \item \textbf{Прямой ход.} Прямой ход (прямая прогонка) состоит в вычислении прогоночных коэффициентов $\alpha_i$, $i=1,2,\ldots,n-1$ и $\beta_i$, $i=1,2,\ldots, n$. При $i=1$ коэффициенты вычисляются по формулам
+        \begin{equation}
+            \alpha_1=-c_1/\gamma_1,\quad \beta_1=d_1\gamma_1, \quad \gamma_1=b_1,\label{f9}
+        \end{equation}
+        а при $i=2,3,\ldots n-1$ --- по рекуррентным формулам
+        \begin{equation}
+            \alpha_i=-c_i/\gamma_i,\quad \beta_i=\left(d_i-a_i\beta_{i-1}\right)/\gamma_i,\quad \gamma_i=b_i+a_i\alpha_{i-1}.
+        \end{equation}
+        При $i=n$ прямая прогонка завершается вычислением
+        \begin{equation}
+            \beta_n=\left(d_n-a_n\beta_{n-1}\right)/\gamma_n,\quad\gamma_n=b_n+a_n\alpha_{n-1}.
+        \end{equation}
+        \item \textbf{Обратный ход.} Обратный ход метода прогонки (обратная прогонка), дает значения неизвестных. Сначала полагают $x_n=\beta_n$. Затем значения остальных неизвестных вычисляют по формуле
+        \begin{equation}
+            x_i=\alpha_i x_{i+1}+\beta_i,\quad i=n-1, n-2, \ldots, 1.\label{f12}
+        \end{equation}
+    \end{enumerate}
+
+    \subsection*{Свойства метода прогонки}
+
+    Непосредственный подсчет показывает, что для реализации вычислений по формулам (\ref{f9})--(\ref{f12}) требуется примерно $8n$ арифметических операций, тогда как в методе Гаусса это число составляет примерно $\frac{2}{3}n^3$. Важно и то, что трехдиагональная структура матрицы системы позволяет использовать для ее хранения лишь $3n-2$ машинных слова.
+
+    Приведем достаточные условия на коэффициенты системы (\ref{f1}), при выполнении которых вычисления по формулам прямой прогонки могут быть доведены до конца (ни один из знаменателей $\gamma_i$ не обратится в нуль). В частности, это гарантирует существование решения системы (\ref{f1}) и его единственность. При выполнении тех же условий коэффициенты $\alpha_i$ при всех $i$ удовлетворяют неравенству
+    \begin{equation}
+        \left|\alpha_i\right|\leqslant 1,
+    \end{equation}
+    а следовательно, обратная прогонка по формуле (\ref{f12}) устойчива по входным данным. Положим $a_1=0$, $c_n=0$.
+
+    \begin{theorem}
+    Пусть коэффициенты системы (\ref{f1}) удовлетворяют следующим условиям
+    \begin{equation}
+        \left|b_k\right|\geqslant\left|a_k\right|+\left|c_k\right|,\quad \left|b_k\right|>\left|a_k\right|,\quad k=1,2,\ldots,n. \label{f14}
+    \end{equation}
+    Тогда $\gamma_i\neq 0$ и $\left|\alpha_i\right|\leqslant 1$ для всех $i=1,2,\ldots,n.$
+    \end{theorem}
+
+    Доказательство. Воспользуемся принципом математической индукции. Из условий теоремы имеем $\gamma_1=b_1\neq 0$ и $\left|\alpha_1\right|=\left|c_1\right|/\left|b_1\right|\leqslant 1$. Пусть теперь $\gamma_{k=1}\neq 0$ и $\left|\alpha_{k-1}\right|\leqslant 1$ для некоторого $k>1$. Тогда
+    \begin{equation}
+        \left|\gamma_k\right|=\left|b_k+a_k\alpha_{k-1}\right|\geqslant\left|b_k\right|-\left|a_k\right|\left|\alpha_{k-1}\right|\geqslant\left|b_k\right|-\left|a_k\right|.
+    \end{equation}
+    Из полученной оценки в силу условий (\ref{f14}) вытекает справедливость неравенств $\left|\gamma_k\right|>0$ и $\left|\gamma_k\right|\geqslant \left|c_k\right|$. Тогда, $\gamma_k\neq 0$ и $\left|\alpha_k\right|=\left|c_k\right|/\left|\gamma_k\right|\leqslant 1$.
+
+    \subsection*{Задание}
+
+    \begin{itemize}
+    	\item Подготовить входные данные для метода прогонки.
+    	\item Показать, что входные данные подходят для решения СЛАУ с помощью данного метода.
+    	\item Реализовать метод прогонки.
+    	\item Оценить число операций, сравнить с ранее рассмотренными методами.
+    \end{itemize}
+
+    \renewcommand{\bibname}{{Список литературы}}
+    \bibliographystyle{gost2008}
+    \begin{thebibliography}{33}
+		\bibitem{lebedeva}
+		Лебедева А. В., Пакулина А. Н. Практикум по методам вычислений. Часть 1. Учебно-методическое пособие. СПб.: Санкт-Петербургский государственный университет, 2021.~156 с.
+		
+		\bibitem{lebedeva2}
+		Пакулина А. В. Практикум по методам вычислений. Часть 2. 2-е издание. Учебно-методическое пособие. СПб.: Санкт-Петербургский государственный университет, 2021.~80 с.
+		
+		\bibitem{Mis}
+		Мысовских И. П. Лекции по методам вычислений: Учебное пособие. СПб.: Издательство Санкт-Петербургского университета, 1998. 472~с.
+		
+		\bibitem{Fadeev}
+		Фаддеев Д. К., Фаддеева В. Н. Вычислительные методы линейной алгебры. М.:  Государственное издательство физико-математической литературы, 1960. 655 с.
+    \end{thebibliography}
+\end{document}
