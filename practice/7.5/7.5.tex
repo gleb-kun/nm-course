@@ -1,0 +1,293 @@
+\documentclass[12pt]{article}
+
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{array,graphicx,dcolumn,multirow,abstract,hanging,fancyhdr,float}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{indentfirst}
+
+\newtheorem{theorem}{Теорема}
+
+\DeclareMathOperator{\cond}{cond}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+
+
+\begin{document}
+    \begin{flushright}
+    	%%.{version}.%%
+    \end{flushright}
+    \begin{flushright}
+	    %%.{date}.%%
+    \end{flushright}
+    \section*{Вычислительный практикум}
+    \section*{Практическое занятие \#7.5. QR-разложение матрицы. Методы вращений и отражений}
+	
+	Рассмотрим СЛАУ
+	\begin{equation}
+		\bold{Ax}=\bold{b}.\label{fm0}
+	\end{equation}
+	Рассмотрим два метода исключения --- метод вращений и метод отражений. Оба метода позволяют представить исходную матрицу $\bold A$ как произведение матрицы $\bold Q$ на верхнюю треугольную матрицу $\bold R$.
+	\begin{equation}
+		\bold{A}=\bold{QR},
+	\end{equation}
+	где $\bold{Q}$ такая, что $\bold{Q}^{T}=\bold{Q}^{-1}$, что эквивалентно $\bold{Q}^T \bold{Q}=\bold{Q}\bold{Q}^T=\bold{E}$.
+	
+    \subsection*{1. Метод вращений}
+
+    Опишем прямой ход метода. На 1-м шаге неизвестную $x_1$ исключают из всех уравнений, кроме первого. Для исключения $x_1$ из второго уравнения вычисляем числа
+    \begin{equation}
+    	c_{12}=\frac{a_{11}}{\sqrt{a^{2}_{11}+a^{2}_{21}}},\quad s_{12}=\frac{a_{21}}{\sqrt{a_{11}^2+a^2_{21}}},\label{fm1}
+    \end{equation}
+    со свойствами 
+    \begin{equation}
+    	c^2_{12}+s^2_{12}=1,\quad -s_{12}a_{11}+c_{12}a_{21}=0.\label{fm2}
+    \end{equation}
+	Затем первое уравнение системы заменяем линейной комбинацией первого и второго уравнения с коэффициентами $c_{12}$ и $s_{12}$, а второе уравнение~--- аналогичной линейной комбинацией с коэффициентами $-s_{12}$ и $c_{12}$. В результате получаем систему
+	\begin{equation}
+		\begin{gathered}
+		\left\{
+		\begin{matrix}
+		a_{11}^{\left(1\right)}x_1 &+ &a_{12}^{\left(1\right)}x_2 &+ &a_{13}^{\left(1\right)}x_3&+\hspace{2mm}\ldots\hspace{2mm}+&a_{1n}^{\left(1\right)}x_n & = &b_{1}^{\left(1\right)},\\
+		&&a_{22}^{\left(1\right)}x_2&+&a_{23}^{\left(1\right)}x_3&+\hspace{2mm}\ldots\hspace{2mm}+&a_{2n}^{\left(1\right)}x_n&=&b_{2}^{\left(1\right)},\\
+		a_{31}x_1 & + & a_{32}x_2 & + & a_{33}x_3 & +\hspace{2mm}\ldots \hspace{2mm}+ &a_{3n}x_n&=&b_{3}\hspace{1.9mm},\\
+		\ldots\\
+		a_{n1}x_1 & + & a_{n2}x_2 & + & a_{n3}x_3 & +\hspace{2mm}\ldots \hspace{2mm}+ &a_{nn}x_n&=&b_{n}\hspace{1.9mm},
+		\end{matrix}
+		\right.
+		\end{gathered}\label{fm3}
+	\end{equation}
+	в которой
+	\begin{equation}
+		\begin{gathered}
+			a_{1j}^{\left(1\right)}=c_{12}a_{1j}+s_{12}a_{2j},\quad a_{2j}^{\left(1\right)}=-s_{12}a_{1j}+c_{12}a_{2j},\quad j=1,2,\ldots,n,\\
+			b_1^{\left(1\right)}=c_{12}b_1+s_{12}b_2,\quad b_2^{\left(1\right)}=-s_{12}b_1+c_{12}b_2.
+		\end{gathered}
+	\end{equation}
+	
+	Видно, что $a_{21}^{\left(1\right)}=-s_{12}a_{11}+c_{12}a_{21}=0$ в силу специально подобранных чисел $c_{12}$ и $s_{12}$ (см. (\ref{fm1}), (\ref{fm2})). Также отметим, что преобразование исходной системы (\ref{fm0}) к виду (\ref{fm3}) эквивалентно умножению слева матрицы $\bold{A}$ и правой части $\bold{b}$ на матрицу
+	\begin{equation}
+		\bold{T}_{12}=\begin{pmatrix}
+			c_{12} & s_{12} & 0 & 0 & \ldots & 0 \\
+			-s_{12} & c_{12} & 0 & 0 & \ldots & 0 \\
+			0 & 0 & 1 & 0 & \ldots & 0 \\
+			0 & 0 & 0 & 1 & \ldots & 0 \\
+			\vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\
+			0 & 0 & 0 & 0 & \ldots & 1 \\
+		\end{pmatrix}.
+	\end{equation}
+	
+	Для исключения неизвестной $x_1$ из третьего уравнения вычисляют числа
+	\begin{equation}
+		c_{13}=\frac{a_{11}^{\left(1\right)}}{\sqrt{\left(a_{11}^{\left(1\right)}\right)^2+a_{31}^2}},\quad s_{13}=\frac{a_{31}}{\sqrt{\left(a_{11}^{\left(1\right)}\right)^2+a_{31}^2}},
+	\end{equation}
+	такие, что $c_{13}^{2}+s_{13}^2=1$, $-s_{13}a_{11}^{\left(1\right)}+c_{13}a_{31}=0$. Затем первое уравнение системы (\ref{fm3}) заменяют линейной комбинацией первого и третьего уравнений с коэффициентами $c_{13}$ и $s_{13}$, а третье уравнение --- аналогичной комбинацией с коэффициентами $-s_{13}$ и $c_{13}$. Это преобразование системы эквивалентно умножению слева на матрицу
+	\begin{equation}
+			\bold{T}_{13}=\begin{pmatrix}
+			c_{13} & 0 & s_{13} & 0 & \ldots & 0 \\
+			0 & 1 & 0 & 0 & \ldots & 0 \\
+			-s_{13} &0 &  c_{13} & 0 & \ldots & 0 \\
+			0 & 0 & 0 & 1 & \ldots & 0 \\
+			\vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\
+			0 & 0 & 0 & 0 & \ldots & 1 \\
+		\end{pmatrix}
+	\end{equation}
+	и приводит к тому, что коэффициент при $x_1$ в преобразованном третьем уравнении обращается в нуль.
+	
+	Таким же образом $x_1$ исключаем из уравнений с номерами $i=4,\ldots, n$. В результате 1-го шага (состоящего из $n-1$ шагов) система приводится к виду
+	\begin{equation}
+		\begin{gathered}
+			\left\{
+			\begin{matrix}
+				a_{11}^{\left(n-1\right)}x_1 &+ &a_{12}^{\left(n-1\right)}x_2 &+ &a_{13}^{\left(n-1\right)}x_3&+\hspace{2mm}\ldots\hspace{2mm}+&a_{1n}^{\left(n-1\right)}x_n & = &b_{1}^{\left(n-1\right)},\\
+				&&a_{22}^{\left(1\right)}x_2&+&a_{23}^{\left(1\right)}x_3&+\hspace{2mm}\ldots\hspace{2mm}+&a_{2n}^{\left(1\right)}x_n&=&b_{2}^{\left(1\right)},\\
+				 &  & a_{32}^{\left(1\right)}x_2 & + & a_{33}^{\left(1\right)}x_3 & +\hspace{2mm}\ldots \hspace{2mm}+ &a_{3n}^{\left(1\right)}x_n&=&b_{3}^{\left(1\right)}\hspace{1.9mm},\\
+				&&\ldots\\
+				&  & a_{n2}^{\left(1\right)}x_2 & + & a_{n3}^{\left(1\right)}x_3 & +\hspace{2mm}\ldots \hspace{2mm}+ &a_{nn}^{\left(1\right)}x_n&=&b_{n}^{\left(1\right)}\hspace{1.9mm},
+			\end{matrix}
+			\right.
+		\end{gathered}\label{fm10}
+	\end{equation}
+	
+	В матричной записи получаем
+	\begin{equation}
+		\bold{A}^{\left(1\right)}\bold{x}=\bold{b}^{\left(1\right)},
+	\end{equation}
+	где $\bold{A}^{\left(1\right)}=\bold{T}_{1n}\cdot\ldots\cdot \bold T_{13}\cdot \bold T_{12}\cdot \bold{A}$, $\bold b^{\left(1\right)}=\bold{T}_{1n}\cdot\ldots\cdot \bold T_{13}\cdot \bold T_{12} \cdot \bold{b}$.
+	
+	Здесь и далее через $\bold{T}_{kl}$ обозначена матрица элементарного преобразования, отличающаяся от единичной матрицы $\bold{E}$ только четырьмя элементами. В ней элементы с индексами $\left(k,k\right)$ и $\left(l,l\right)$ равны $c_{kl}$, элемент с индексами $\left(k,l\right)$ равен $s_{kl}$, а элемент с индексами $\left(l,k\right)$ равен $-s_{kl}$, причем выполнено условие
+	\begin{equation}
+		c_{kl}^2+s_{kl}^{2}=1.\label{fm12}
+	\end{equation}
+	
+	Действие матрицы $\bold{T}_{kl}$ на вектор $\bold{x}$ эквивалентно его повороту вокруг оси, перпендикулярной плоскости $Ox_kx_l$ на угол $\varphi_{kl}$ такой, что $c_{kl}=\cos\varphi_{kl}$, $s_{kl}=\sin \varphi_{kl}$ (существование такого угла гарантируется равенством (\ref{fm12})). Операция умножения на матрицу $\bold{T}_{kl}$ часто называется плоским вращением (или преобразованием Гивенса). Заметим, что $\bold{T}_{kl}^{T}=\bold{T}_{kl}^{-1}$ и, следовательно, матрица $\bold{T}_{kl}$ --- ортогональная.
+	
+	На 2-м шаге метода вращений, состоящем из $n-2$ шагов, из уравнений системы (\ref{fm10}) с номерами $i=3,4,\ldots,n$ исключаем неизвестную $x_2$. Для этого каждое $i$-е уравнение комбинируют со вторым уравнением. В результате приходим к системе
+	\begin{equation}
+		\begin{gathered}
+			\left\{
+			\begin{matrix}
+				a_{11}^{\left(n-1\right)}x_1 &+ &a_{12}^{\left(n-1\right)}x_2 &+ &a_{13}^{\left(n-1\right)}x_3&+\hspace{2mm}\ldots\hspace{2mm}+&a_{1n}^{\left(n-1\right)}x_n & = &b_{1}^{\left(n-1\right)},\\
+				&&a_{22}^{\left(n-1\right)}x_2&+&a_{23}^{\left(n-1\right)}x_3&+\hspace{2mm}\ldots\hspace{2mm}+&a_{2n}^{\left(n-1\right)}x_n&=&b_{2}^{\left(n-1\right)},\\
+				&  &  &  & a_{33}^{\left(2\right)}x_3 & +\hspace{2mm}\ldots \hspace{2mm}+ &a_{3n}^{\left(2\right)}x_n&=&b_{3}^{\left(2\right)}\hspace{1.9mm},\\
+				&&&&\ldots\\
+				&  &  &  & a_{n3}^{\left(2\right)}x_3 & +\hspace{2mm}\ldots \hspace{2mm}+ &a_{nn}^{\left(2\right)}x_n&=&b_{n}^{\left(2\right)}\hspace{1.9mm}.
+			\end{matrix}
+			\right.
+		\end{gathered}\label{fm13}
+	\end{equation}
+	В матричной форме записи получаем
+	\begin{equation}
+		\bold{A}^{\left(2\right)}\bold{x}=\bold{b}^{\left(2\right)},
+	\end{equation}
+	где $\bold{A}^{\left(2\right)}=\bold{T}_{2n}\cdot \ldots \cdot \bold{T}_{24}\cdot\bold{T}_{23}\cdot\bold{A}^{\left(1\right)}$, $\bold{b}^{\left(2\right)}=\bold{T}_{2n}\cdot\ldots\cdot\bold{T}_{24}\cdot\bold{T}_{23}\cdot \bold{b}^{\left(1\right)}$.
+	
+	После завершения $\left(n-1\right)$-го шага система принимает вид
+	\begin{equation}
+		\begin{gathered}
+			\left\{
+			\begin{matrix}
+				a_{11}^{\left(n-1\right)}x_1 &+ &a_{12}^{\left(n-1\right)}x_2 &+ &a_{13}^{\left(n-1\right)}x_3&+\hspace{2mm}\ldots\hspace{2mm}+&a_{1n}^{\left(n-1\right)}x_n & = &b_{1}^{\left(n-1\right)},\\
+				&&a_{22}^{\left(n-1\right)}x_2&+&a_{23}^{\left(n-1\right)}x_3&+\hspace{2mm}\ldots\hspace{2mm}+&a_{2n}^{\left(n-1\right)}x_n&=&b_{2}^{\left(n-1\right)},\\
+				&  &  &  & a_{33}^{\left(n-1\right)}x_3 & +\hspace{2mm}\ldots \hspace{2mm}+ &a_{3n}^{\left(n-1\right)}x_n&=&b_{3}^{\left(n-1\right)}\hspace{1.9mm},\\
+				&&&&&&\ldots\\
+				&  &  &  &  &  &a_{nn}^{\left(n-1\right)}x_n&=&b_{n}^{\left(n-1\right)}\hspace{1.9mm}.
+			\end{matrix}
+			\right.
+		\end{gathered}\label{fm15}
+	\end{equation}
+	В матричной форме записи
+	\begin{equation}
+		\bold{A}^{\left(n-1\right)}\bold{x}=\bold{b}^{\left(n-1\right)},
+	\end{equation}
+	где $\bold{A}^{\left(n-1\right)}=\bold{T}_{n-1,n}\cdot\bold{A}^{\left(n-2\right)}$, $\bold{b}^{\left(n-1\right)}=\bold{T}_{n-1,n}\bold{b}^{\left(n-2\right)}$.
+	
+	Введем обозначение $\bold R$ для полученной верхней треугольной матрицы $\bold{A}^{\left(n-1\right)}$. Она связана с исходной матрицей $\bold{A}$ равенством
+	\begin{equation}
+		\bold{R}=\bold{TA},
+	\end{equation}
+	где $\bold{T}=\bold{T}_{n-1,n}\cdot\ldots\cdot\bold{T}_{2n}\cdot\ldots\cdot\bold{T}_{23}\cdot\bold{T}_{1n}\cdot\ldots\cdot\bold{T}_{13}\cdot\bold{T}_{12}$ --- матрица результирующего вращения. Заметим, что матрица $\bold{T}$ ортогональна как произведение ортогональных матриц. Обозначая $\bold{Q}=\bold{T}^{-1}=\bold{T}^{T}$, получаем $\bold{QR}$-разложение матрицы $\bold{A}$.
+	
+	Обратный ход метода вращений проводится точно так же, как и для метода Гаусса. Получение $\bold{QR}$-разложения для квадратной матрицы $\bold{A}$ общего вида требует примерно $2n^3$ арифметических операций.
+ 	
+    \subsection*{Метод отражений}
+    
+    Матрицами Хаусхолдера (или отражений) называются квадратные матрицы вида
+    \begin{equation}
+    	\bold{V}=\bold{E}-2\bold{ww}^{T},
+    \end{equation}
+    где $\bold{w}$ --- вектор-столбец в $\bold{R}^n$, имеющий единичную длину $\left\|\bold{w}\right\|_2=1$.
+    
+    Матрица Хаусхолдера симметрична и ортогональна. Действительно,
+    \begin{equation}
+    	\bold{V}^{T}=\left(\bold{E}-2\bold{ww}^T\right)^T=\bold{E}^T-2\left(\bold{w}^T\right)^T\bold{w}^{T}=\bold{E}-2\bold{w}\bold{w}^{T}=\bold{V},
+    \end{equation} 
+    \begin{equation}
+    	\bold{V}^T\bold{V}=\bold{VV}=\left(\bold{E}-2\bold{ww}^{T}\right)\left(\bold{E}-2\bold{ww}^{T}\right)=\bold{E}-4\bold{ww}^{T}+4\bold{ww}^T\bold{ww}^T=\bold{E}.
+    \end{equation}
+    Здесь учтено, что $\bold{w}^T\bold{w}=\left\|\bold{w}\right\|_2^2=1$.
+    
+    Умножение на матрицу $\bold{V}$ называют преобразованием Хаусхолдера (или отражением). Произведение $\bold{V}\bold{x}$ можно интерпретировать как ортогональное отражение вектора в $\bold{R}^n$ относительно гиперплоскости, проходящей через начало координат и имеющей нормальный вектор, равный~$\bold{w}$.
+    
+    Как и вращения, отражения используются для обращения в нуль элементов преобразуемой матрицы. Однако здесь с помощью одного отражения можно обратить в нуль уже не один элемент матрицы, а целую группу элементов некоторого столбца или строки. Метод позволяет получить $\bold{QR}$-разложение квадратной матрицы общего вида примерно за $\left(4/3\right)n^3$ арифметических операций, то есть в полтора раза быстрее. Изложение самого метода можно найти, например, в книге Бахвалова~Н.~С. и других <<Численные методы>> \cite{Bch}.
+    
+    Поясним, как получается $\bold{QR}$-разложение матрицы $\bold{A}$ с помощью преобразований Хаусхолдера. Пусть $\bold{a}=\left(a_1\,\, a_2\,\, \ldots \,\, a_n\right)^T$ --- произвольный вектор, у которого одна из координат $a_2,\ldots,a_n$ отлична от нуля. Покажем, что вектор $\bold{w}$ в преобразовании Хаусхолдера может быть выбран так, чтобы обратились в нуль все координаты вектора $\bold{Va}$ кроме первой $\bold{Va}=c\bold{e}_1=c\left(1\,\, 0 \,\, \ldots \,\, 0\right)^T$. Поскольку ортогональное преобразование не меняет евклидову норму вектора, то $c=\left\|\bold{a}\right\|_2$ и искомое преобразование таково, что
+    \begin{equation}
+    	\bold{Va}=\left(\bold{E}-2\bold{ww}^{T}\right)\bold{a}=\bold{a}-2\left(\bold{w},\bold{a}\right)\bold{w}=\bold{a}-\alpha\bold{w}=\left\|\bold{a}\right\|_2\bold{e}_1,
+    \end{equation}
+    где $\alpha=2\left(\bold{w},\bold{a}\right)$. Таким образом, вектор $\bold{w}$ следует выбрать так, чтобы
+    \begin{equation}
+    	\alpha w_1-a_1=\pm \left\|\bold{a}\right\|_2,\quad \alpha w_2=a_2,\ldots,\alpha w_n=a_n,
+    \end{equation}
+    что эквивалентно равенству $\bold{w}=\alpha^{-1}\left(\bold{a}\pm\left\|\bold{a}\right\|_2\bold{e}_1\right)$. Вспоминая, что\linebreak $\alpha=2\left(\bold{w},\bold{a}\right)=2\left(w_1a_1+w_2a_2+\ldots+w_na_n\right)$, имеем
+    \begin{equation}
+    	\alpha^2=2\left(a_1\pm\left\|\bold{a}\right\|_2\right)a_1+2\left(a_2^2+\ldots+a^2_n\right)=\left\|\bold{a}\pm \left\|\bold{a}\right\|_2\bold{e}_1\right\|^2_2
+    \end{equation}
+    Таким образом $\bold{w}=\dfrac{\bold{v}}{\left\|\bold{v}\right\|_2}$, где $\bold{v}=\bold{a}\pm \left\|\bold{a}\right\|_2 \bold{e}_1$.
+    
+    Знак ($+$ или $-$) при вычислении $\bold{v}=\bold{a}\pm \left\|\bold{a}\right\|_2 \bold{e}_1$​ выбирается так, чтобы минимизировать погрешность вычислений и избежать проблем численной неустойчивости, другими словами знак выбирается так, чтобы~$\left\|\bold{v}\right\|$ была как можно больше. Если $a_1$<0, выбирается знак $-$, если $a_1\geqslant 0$, выбирается знак $+$. Это немного отличается от функции sign.
+    
+    Взяв $\bold{a}=\bold{a}_1$, где $\bold{a}_1$ --- первый из столбцов матрицы $\bold{A}$, и положив $\bold{P}_1=\bold{V}$, получим
+    \begin{equation}
+    	\begin{gathered}
+    		\bold{A}^{\left(1\right)}=\bold{P}_{1}\bold{A}=
+    		\begin{pmatrix}
+    			a_{11}^{\left(1\right)} & a_{12}^{\left(1\right)} & a_{13}^{\left(1\right)} & \ldots & a_{1n}^{\left(1\right)} \\
+    			0 & a_{22}^{\left(1\right)} & a_{23}^{\left(1\right)} & \ldots & a_{2n}^{\left(1\right)} \\
+    			0 &  a_{32}^{\left(1\right)} & a_{33}^{\left(1\right)} & \ldots & a_{3n}^{\left(1\right)} \\
+    			\vdots & \vdots & \vdots & \ddots & \vdots \\
+    			0 & a_{n2}^{\left(1\right)} & a_{n3}^{\left(1\right)} & \ldots & a_{nn}^{\left(1\right)}
+    		\end{pmatrix}.
+    	\end{gathered}
+    \end{equation}
+    
+    Далее, взяв вектор $\bold{a}_2=\left(a_{22}^{\left(1\right)}\,\, \ldots \,\, a_{n2}^{\left(1\right)}\right)^{T}\in \bold{R}^{n-1}$, с помощью преобразования Хаусхолдера $\bold{V}_{n-1}$ в пространстве $\left(n-1\right)$-мерных векторов можно обнулить все координаты вектора $\bold{V}_{n-1}\bold{a}_2$ кроме первой. Положив
+    \begin{equation}
+    	\bold{P}_2=\begin{pmatrix}
+    		1 & 0 \\
+    		0 & \bold{V}_{n-1}
+    	\end{pmatrix},
+    \end{equation}
+    получим
+    \begin{equation}
+    	\begin{gathered}
+    		\bold{A}^{\left(2\right)}=\bold{P}_{2}\bold{A}^{\left(1\right)}=\bold{P}_2\bold{P}_1\bold{A}=
+    		\begin{pmatrix}
+    			a_{11}^{\left(1\right)} & a_{12}^{\left(1\right)} & a_{13}^{\left(1\right)} & \ldots & a_{1n}^{\left(1\right)} \\
+    			0 & a_{22}^{\left(2\right)} & a_{23}^{\left(2\right)} & \ldots & a_{2n}^{\left(2\right)} \\
+    			0 & 0 & a_{33}^{\left(2\right)} & \ldots & a_{3n}^{\left(2\right)} \\
+    			\vdots & \vdots & \vdots & \ddots & \vdots \\
+    			0 & 0 & a_{n3}^{\left(2\right)} & \ldots & a_{nn}^{\left(2\right)}
+    		\end{pmatrix}.
+    	\end{gathered}
+    \end{equation}
+    Заметим, что первый столбец и первая строка матрицы при этом преобразовании не меняются.
+    
+    Выполнив $n-1$ шаг этого метода, приходим к верхней треугольной матрице
+    \begin{equation}
+    	\begin{gathered}
+    	\bold{A}^{\left(n-1\right)}=\bold{P}_{n-1}\cdot\ldots\cdot\bold{P}_2\cdot\bold{P}_1\cdot \bold{A}=
+    	\begin{pmatrix}
+    		a_{11}^{\left(1\right)} & a_{12}^{\left(1\right)} & a_{13}^{\left(1\right)} & \ldots & a_{1n}^{\left(1\right)} \\
+    		0 & a_{22}^{\left(2\right)} & a_{23}^{\left(2\right)} & \ldots & a_{2n}^{\left(2\right)} \\
+    		0 & 0 & a_{33}^{\left(3\right)} & \ldots & a_{3n}^{\left(3\right)} \\
+   			\vdots & \vdots & \vdots & \ddots & \vdots \\
+  			0 & 0 & 0 & \ldots & a_{nn}^{\left(n-1\right)}
+    	\end{pmatrix}.
+    	\end{gathered}
+    \end{equation}
+    
+    Поскольку матрицы $\bold{P}_1,\ldots,\bold{P}_{n-1}$ симметричны и ортогональны, получено разложение
+    \begin{equation}
+    	\bold{A}=\bold{QR},
+    \end{equation}
+    в котором матрица $\bold{Q}=\bold{P}_1\cdot\bold{P}_2\cdot\ldots\cdot\bold{P}_{n-1}$ --- ортогональная, а матрица\linebreak $\bold{R}~=~\bold{A}^{\left(n-1\right)}$~--- верхняя треугольная.
+	
+    \subsection*{Задание}
+
+    \begin{itemize}
+    	\item Реализовать $\bold{QR}$-разложение методом вращений.
+    	\item Реализовать $\bold{QR}$-разложение методом отражений.
+    	\item Оценить число операций обоих методов, сравнить с ранее рассмотренными методами.
+    	\item Решить СЛАУ вида $\bold{QRx}=\bold{b}$.
+    	\item Выходные данные оформить в подобающем виде: с оценками фактических погрешностей, невязками, оценками по норме. Другими словами, чтобы можно было смотреть на <<вывод>> и душа радовалась.
+    \end{itemize}
+
+    \renewcommand{\bibname}{{Список литературы}}
+    \bibliographystyle{gost2008}
+    \begin{thebibliography}{4}
+    	\bibitem{Bch}
+    	Бахвалов Н. С., Жидков Н. П., Кобельков Г. М. Численные методы. М.: Наука, 1987. 636 с.
+    	
+		\bibitem{lebedeva}
+		Лебедева А. В., Пакулина А. Н. Практикум по методам вычислений. Часть 1. Учебно-методическое пособие. СПб.: Санкт-Петербургский государственный университет, 2021.~156 с.
+		
+		\bibitem{Mis}
+		Мысовских И. П. Лекции по методам вычислений: Учебное пособие. СПб.: Издательство Санкт-Петербургского университета, 1998. 472~с.
+		
+		\bibitem{Fadeev}
+		Фаддеев Д. К., Фаддеева В. Н. Вычислительные методы линейной алгебры. М.:  Государственное издательство физико-математической литературы, 1960. 655 с.
+    \end{thebibliography}
+\end{document}
