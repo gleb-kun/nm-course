@@ -1,0 +1,182 @@
+\documentclass[12pt]{article}
+
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{array,graphicx,dcolumn,multirow,abstract,hanging,fancyhdr,float}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{indentfirst}
+
+\newtheorem{theorem}{Теорема}
+
+\DeclareMathOperator{\cond}{cond}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+
+\begin{document}
+    \begin{flushright}
+		%%.{version}.%%
+	\end{flushright}
+	\begin{flushright}
+		%%.{date}.%%
+	\end{flushright}
+    \section*{Вычислительный практикум}
+    \section*{Практическое занятие \#8.1. Метод простой\\итерации}
+
+	\subsection*{Приведение системы к виду, удобному для итераций}
+	
+	Для решения системы
+	\begin{equation}
+		\bold{A}\bold{x}=\bold{b}\label{f1}
+	\end{equation}
+	с квадратной невырожденной матрицей, методом простой итерации, необходимо предварительно преобразовать эту систему к виду
+	\begin{equation}
+		\bold{x}=\bold{Bx}+\bold{c},\label{f2}
+	\end{equation}
+	что есть:
+	\begin{equation}
+		\begin{gathered}
+			x_1=b_{11}x_{1}+b_{12}x_2+b_{13}x_3+\ldots+b_{1n}x_{n}+c_{1},\\
+			x_2=b_{21}x_{1}+b_{22}x_2+b_{23}x_3+\ldots+b_{2n}x_{n}+c_{2},\\
+			x_3=b_{31}x_{1}+b_{32}x_2+b_{33}x_3+\ldots+b_{3n}x_{n}+c_{3},\\
+			\ldots\hspace{65mm}\\
+			x_n=b_{n1}x_{1}+b_{n2}x_2+b_{n3}x_3+\ldots+b_{nn}x_{n}+c_{n}.\\
+		\end{gathered}
+	\end{equation}
+	
+	Самый простой способ приведения системы (\ref{f1}) к виду (\ref{f2}) состоит в следующем. Из первого уравнения системы (\ref{f1}) выражается неизвестную~$x_1$:
+	\begin{equation}
+		x_1=a_{11}^{-1}\left(b_1-a_{12}x_2-a_{13}x_3-\ldots-a_{1n}x_n\right),
+	\end{equation}
+	из второго уравнения --- неизвестную $x_2$:
+	\begin{equation}
+		x_2=a_{22}^{-1}\left(b_2-a_{21}x_1-a_{23}x_3-\ldots-a_{2n}x_n\right),
+	\end{equation}
+	и так далее. В результате получаем систему
+	\begin{equation}
+		\begin{gathered}
+			x_1=\hspace{15mm} b_{12}x_2+b_{13}x_3+\ldots+b_{1,n-1}x_{n-1}+b_{1n}x_n+c_1,\\
+			x_2=b_{21}x_1\hspace{15mm} +b_{23}x_3+\ldots+b_{2,n-1}x_{n-1}+b_{2n}x_n+c_2,\\
+			x_3=b_{31}x_1+b_{32}x_2\hspace{15mm}+\ldots+b_{3,n-1}x_{n-1}+b_{3n}x_n+c_3,\\
+			\ldots\hspace{91mm}\\
+			x_n=b_{n1}x_1+b_{n2}x_2+b_{n3}x_3+\ldots+ b_{n,n-1}x_{n-1}\hspace{15mm}+c_n,\\
+		\end{gathered}
+	\end{equation}
+	в которой на главной диагонали матрицы $\bold{B}$ находятся нулевые элементы. Остальные элементы вычисляются по формулам
+	\begin{equation}
+		b_{ij}=-a_{ij}/a_{ii},\quad c_i=b_i/a_{ii},\quad i,j=1,2,\ldots,n,j \neq i.
+	\end{equation}
+	Очевидно, что для возможности выполнения указанного преобразования необходимо, чтобы диагональные элементы матрицы $\bold{A}$ были ненулевыми.
+	
+	\subsection*{Алгоритм метода простой итерации}
+	
+	Выберем некоторое начальное приближение
+	\begin{equation}
+		\bold{x}^{\left(0\right)}=
+		\begin{pmatrix}
+			x_1^{\left(0\right)}\\
+			x_2^{\left(0\right)}\\
+			\vdots\\
+			x_n^{\left(0\right)}
+		\end{pmatrix}.
+	\end{equation}
+	Подставляя его в правую часть системы (\ref{f2}) и вычисляя полученное выражение, находим первое приближение
+	\begin{equation}
+		\bold{x}^{\left(1\right)}=\bold{B}\bold{x}^{\left(0\right)}+\bold{c}.
+	\end{equation}
+	Подставляя приближение $\bold{x}^{\left(1\right)}$ в правую часть системы (\ref{f2}), получаем
+	\begin{equation}
+		\bold{x}^{\left(2\right)}=\bold{B}\bold{x}^{\left(1\right)}+\bold{c}.
+	\end{equation}
+	Продолжая этот процесс далее, получаем последовательность
+	\begin{equation}
+		\bold{x}^{\left(0\right)}, \bold{x}^{\left(1\right)},\ldots,\bold{x}^{\left(m\right)},\ldots
+	\end{equation}
+	приближений, вычисляемых по фомруле
+	\begin{equation}
+		\bold{x}^{\left(k+1\right)}=\bold{B}\bold{x}^{\left(k\right)}+\bold{c},\quad k=0,1,2,\ldots\label{f11}
+	\end{equation}
+	В развернутой форме записи формула (\ref{f11}) выглядит следующим образом:
+	\begin{equation}
+		\begin{gathered}
+			x_1^{\left(k+1\right)}=b_{11}x_1^{\left(k\right)}+b_{12}x_2^{\left(k\right)}+b_{13}x_3^{\left(k\right)}+\ldots+b_{1n}x_n^{\left(k\right)}+c_1,\\
+			x_2^{\left(k+1\right)}=b_{21}x_1^{\left(k\right)}+b_{22}x_2^{\left(k\right)}+b_{23}x_3^{\left(k\right)}+\ldots+b_{2n}x_n^{\left(k\right)}+c_2,\\
+			\ldots\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\\
+			x_n^{\left(k+1\right)}=b_{n1}x_1^{\left(k\right)}+b_{n2}x_2^{\left(k\right)}+b_{n3}x_3^{\left(k\right)}+\ldots+b_{nn}x_n^{\left(k\right)}+c_n.\\
+		\end{gathered}
+	\end{equation}
+	
+	\subsection*{Сходимость метода простой итерации}
+	
+	\begin{theorem}[Необходимое условие сходимости]
+		Пусть выполнено \linebreak условие
+		\begin{equation}
+			\left\|\bold{B}\right\|<1.\label{f14}
+		\end{equation}
+		Тогда
+		\begin{enumerate}
+			\item решение $\overline{\bold{x}}$, системы (\ref{f2}) существует и единственно;
+			\item при произвольном начальном приближении $\bold{x}^{\left(0\right)}$ метод простой итерации сходится и справедлива оценка погрешности
+			\begin{equation}
+				\left\|\bold{x}^{\left(m\right)}-\overline{\bold{x}}\right\|\leqslant  \left\|\bold{B}\right\|^{m}\left\|\bold{x}^{\left(0\right)}-\overline{\bold{x}}\right\|.
+			\end{equation}
+		\end{enumerate}
+	\end{theorem}
+	
+	\begin{theorem}
+		Если выполнено условие (\ref{f14}), то справедлива апостериорная оценка погрешности
+		\begin{equation}
+			\left\|\bold{x}^{\left(m\right)}-\overline{\bold{x}}\right\|\leqslant  
+			\frac{\left\|\bold{B}\right\|}{1-\left\|\bold{B}\right\|}\left\|\bold{x}^{\left(m\right)}-\bold{x}^{\left(m-1\right)}\right\|.\label{f16}
+		\end{equation}
+	\end{theorem}
+	
+	Величину, стоящую в правой части неравенства (\ref{f16}), можно легко вычислить после нахождения очередного приближения $x^{\left(m\right)}$. Если требуется найти решение с точностью $\varepsilon$, то в силу (\ref{f16}) следует вести итерации до выполнения неравенства
+	\begin{equation}
+		\frac{\left\|\bold{B}\right\|}{1-\left\|\bold{B}\right\|}\left\|\bold{x}^{\left(m\right)}-\bold{x}^{\left(m-1\right)}\right\|<\varepsilon.
+	\end{equation}
+	
+	Таким образом, в качестве критерия окончания итерационного процесса может быть использовано неравенство
+	\begin{equation}
+		\left\|\bold{x}^{\left(m\right)}-\bold{x}^{\left(m-1\right)}\right\|<\varepsilon_1,\label{f18}
+	\end{equation}
+	где $$\varepsilon_1=\frac{1-\left\|\bold{B}\right\|}{\left\|\bold{B}\right\|}\varepsilon.$$
+	
+	На практике иногда используют привлекательный своей простотой критерий окончания
+	\begin{equation}
+		\left\|\bold{x}^{\left(m\right)}-\bold{x}^{\left(m-1\right)}\right\|<\varepsilon\label{f19}.
+	\end{equation}
+	Тут стоит отметить, что для метода простой итерации его применение обосновано только тогда, когда $\left\|\bold{B}\right\|\leqslant 1/2$ (в этом случае $$\left(1-\left\|\bold{B}\right\|\right)/\left\|\bold{B}\right\|~\geqslant~1$$
+	и выполнение неравенства (\ref{f19}) влечет за собой выполнение неравенства~(\ref{f18})). Однако в большинстве реальных случаев величина $\left\|\bold{B}\right\|$ оказывается близкой к единице и поэтому $$\left(1-\left\|\bold{B}\right\|\right)/\left\|\bold{B}\right\|~\ll~1.$$
+	В этих случаях $\varepsilon_1\ll\varepsilon$ и использование критерия (\ref{f19}) приводит к существенно преждевременному окончанию итераций. Величина\linebreak $\left\|\bold{x}^{\left(m\right)}-\bold{x}^{\left(m-1\right)}\right\|$ здесь оказывается малой не потому, что приближения $\bold{x}^{\left(m-1\right)}$ и $\bold{x}^{\left(m\right)}$ близки к решению, а потому, что метод сходится медленно.
+	
+	Пусть $\lambda_1, \lambda_2,\ldots,\lambda_n$ --- собственные значения матрицы $\bold{B}$. Спектральным радиусом матрицы $\bold{B}$ называется величина $\rho\left(\bold{B}\right)=\max_{1\leqslant i\leqslant n}|\lambda_i|$.
+	\begin{theorem}[Необходимое и достаточное условие сходимости]
+		\,\\Метод простой итерации (\ref{f11}) сходится при любом начальном приближении $\bold{x}^{\left(0\right)}$ тогда и только тогда, когда $\rho\left(\bold{B}\right)<1$, то есть когда все собственные значения матрицы $\bold{B}$ по модулю меньше единицы.
+	\end{theorem}
+	
+	\subsection*{Задания}
+	
+	\begin{enumerate}
+		\item Привести несколько входных данных, показать их различия.
+		\item Выбрать различные начальные приближения --- правая часть, вектор из нулей, вектор из единиц, случайный вектор.
+		\item Реализовать метод простой итерации, при вычислениях показать промежуточные результаты каждой итерации. Оценить сходимость метода на каждом шаге и указать сколько итераций потребовалось для достижение некоторой точности.
+		\item Требуемая точность приближенного решения $10^{-3}$, $10^{-6}$.
+		\item Для прекращения итерационного процесса воспользоваться различными критериями окончания, обосновать их выборы, сравнить их.
+		\item Оценить число арифметических операций.
+	\end{enumerate}
+	
+    \renewcommand{\bibname}{{Список литературы}}
+    \bibliographystyle{gost2008}
+    \begin{thebibliography}{33}
+        \bibitem{lebedeva}
+        Лебедева А. В., Пакулина А. Н. Практикум по методам вычислений. Часть 1. Учебно-методическое пособие. СПб.: Санкт-Петербургский государственный университет, 2021.~156 с.
+        
+        \bibitem{Mis}
+        Мысовских И. П. Лекции по методам вычислений: Учебное пособие. СПб.: Издательство Санкт-Петербургского университета, 1998. 472~с.
+        
+        \bibitem{Fadeev}
+        Фаддеев Д. К., Фаддеева В. Н. Вычислительные методы линейной алгебры. М.:  Государственное издательство физико-математической литературы, 1960. 655 с.
+    \end{thebibliography}
+\end{document}

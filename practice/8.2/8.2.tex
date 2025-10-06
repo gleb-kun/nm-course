@@ -1,0 +1,187 @@
+\documentclass[12pt]{article}
+
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{array,graphicx,dcolumn,multirow,abstract,hanging,fancyhdr,float}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{indentfirst}
+
+\newtheorem{theorem}{Теорема}
+
+\DeclareMathOperator{\cond}{cond}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+
+\begin{document}
+    \begin{flushright}
+		%%.{version}.%%
+	\end{flushright}
+	\begin{flushright}
+		%%.{date}.%%
+	\end{flushright}
+    \section*{Вычислительный практикум}
+    \section*{Практическое занятие \#8.2. Метод Зейделя}
+
+	\subsection*{Описание метода}
+	
+	Пусть система
+	\begin{equation}
+		\bold{A}\bold{x}=\bold{b}\label{f1}
+	\end{equation}
+	приведена к виду
+	\begin{equation}
+		\bold{x}=\bold{Bx}+\bold{c}.\label{f2}
+	\end{equation}
+	
+	Метод Зейделя можно рассматривать как модификацию метода простой итерации. При вычислении $\left(k+1\right)$-го приближения к неизвестной~$x_i$, $i>1$ используют уже найденные $\left(k+1\right)$-е приближения к неизвестным $x_1,\ldots, x_{i-1}$, а не $k$-е приближения, как в методе простой итерации.
+	
+	На $\left(k+1\right)$-й итерации компоненты приближения $\bold{x}^{\left(k+1\right)}$ вычисляются по формулам
+	\begin{equation}
+		\begin{matrix}
+			x_1^{\left(k+1\right)}  =&                            & &b_{12}x_2^{\left(k\right)}  &+&b_{13}x_3^{\left(k\right)}  &+\hspace{3mm}\ldots\hspace{3mm}+&b_{1n}x_n^{\left(k\right)} + c_1,\\
+			x_2^{\left(k+1\right)}  =&b_{21}x_1^{\left(k+1\right)}& &                            &+&b_{23}x_3^{\left(k\right)}  &+\hspace{3mm}\ldots\hspace{3mm}+&b_{2n}x_n^{\left(k\right)} + c_2,\\
+			x_3^{\left(k+1\right)}  =&b_{31}x_1^{\left(k+1\right)}&+&b_{32}x_2^{\left(k+1\right)}& &                            &+\hspace{3mm}\ldots\hspace{3mm}+&b_{3n}x_n^{\left(k\right)} + c_3,\\
+			\ldots \\
+			x_{n}^{\left(k+1\right)}=&b_{n1}x_1^{\left(k+1\right)}&+&b_{n2}x_2^{\left(k+1\right)}&+&b_{n3}x_3^{\left(k+1\right)}&+\hspace{3mm}\ldots\hspace{3mm}+&\hspace{16mm}c_n. \\
+		\end{matrix}\label{fm3}
+	\end{equation}
+	
+	Введем нижнюю и верхнюю треугольные матрицы
+	\begin{equation}
+		\bold{B}_1=\begin{pmatrix}
+			0      & 0 & 0 & \ldots & 0 \\
+			b_{21} & 0 & 0 & \ldots & 0 \\
+			b_{31} & b_{32} & 0 & \ldots & 0 \\
+			\vdots & \vdots & \vdots & \ddots & \vdots \\
+			b_{n1} & b_{n2} & b_{n3} & \ldots & 0 \\
+		\end{pmatrix},\quad
+			\bold{B}_2=\begin{pmatrix}
+			0      & b_{12} & b_{13} & \ldots & b_{1n} \\
+			0 & 0 & b_{23} & \ldots & b_{2n} \\
+			0 & 0 & 0 & \ldots & b_{3n} \\
+			\vdots & \vdots & \vdots & \ddots & \vdots \\
+			0 & 0 & 0 & \ldots & 0 \\
+		\end{pmatrix}.\label{fm4}
+	\end{equation}
+	С учетом (\ref{fm4}) запишем формулы (\ref{fm3}) в виде
+	\begin{equation}
+		\bold{x}^{\left(k+1\right)}=\bold{B}_1\bold{x}^{\left(k+1\right)}+\bold{B}_2 \bold{x}^{\left(k\right)}+\bold{c}.
+	\end{equation}
+	
+	Видно, что $\bold{B}=\bold{B}_1+\bold{B}_2$ и поэтому решение $\overline{\bold{x}}$ системы (\ref{f1}) удовлетворяет равенству
+	\begin{equation}
+		\overline{\bold{x}}=\bold{B}_1\overline{\bold{x}}+\bold{B}_2\overline{\bold{x}}+\bold{c}.
+	\end{equation}
+	
+	\subsection*{Достаточные условия сходимости}
+
+	\begin{theorem}
+		Пусть $\left\|\bold{B}\right\|<1$, где $\left\|\cdot\right\|$ --- одна из норм $\left\|\cdot\right\|_{\infty}$, $\left\|\cdot\right\|_{1}$. Тогда при любом выборе начального приближения $\bold{x}^{\left(0\right)}$ метод Зейделя сходится со скоростью геометрической прогрессии, знаменатель которой $q\leqslant \left\|\bold{B}\right\|$.
+	\end{theorem}
+	
+	\begin{theorem}
+		Пусть выполнено условие
+		\begin{equation}
+			\left\|\bold{B}_1\right\|+\left\|\bold{B}_2\right\|<1.
+		\end{equation}
+	Тогда при любом выборе начального приближения метод Зейделя сходится и верна оценка погрешности
+	\begin{equation}
+		\left\|\bold{x}^{\left(m\right)}-\overline{\bold{x}}\right\|\leqslant q^{m}\left\|\bold{x}^{\left(0\right)}-\overline{\bold{x}}\right\|,
+	\end{equation}
+	где $q=\left\|\bold{B}_2\right\|/\left(1-\left\|\bold{B}_1\right\|\right)<1$.
+	\end{theorem}
+	
+	Выделим встречающийся на практике случай систем с симметричной положительно определенной матрицей.
+	\begin{theorem}
+		Пусть $\bold{A}$ --- симметричная положительно определенная матрица. Тогда при любом выборе начального приближения $\bold{x}^{\left(0\right)}$ метод Зейделя сходится со скоростью геометрической прогрессии.
+	\end{theorem}
+	Отметим, что никаких дополнительных априорных условий типа малости нормы некоторой матрицы здесь не накладывается.
+	
+	Соответственно, если матрица $\bold{A}$ симметричная и положительно определенная, то метод Зейделя сходится быстрее, чем метод простой итерации.
+	
+	\subsection*{Апостериорная оценка погрешности}
+	
+	Если выполнено условие $\left\|\bold{B}\right\|<1$, то для метода Зейделя справедлива апостериорная оценка погрешности
+	\begin{equation}
+		\left\|\bold{x}^{\left(m\right)}-\overline{\bold{x}}\right\|\leqslant\frac{\left\|\bold{B}_2\right\|}{1-\left\|\bold{B}\right\|}\left\|\bold{x}^{\left(m\right)}-\bold{x}^{\left(m-1\right)}\right\|,\quad m\geqslant 1.
+	\end{equation}
+	
+	Отсюда следует критерий окончания итерационного процесса в методе Зейделя. Если требуется найти решение с точностью $\varepsilon > 0$, то итерационный процесс следует вести до выполнения неравенства
+	\begin{equation}
+		\frac{\left\|\bold{B}_2\right\|}{1-\left\|\bold{B}\right\|}\left\|\bold{x}^{\left(m\right)}-\bold{x}^{\left(m-1\right)}\right\|<\varepsilon,
+	\end{equation}
+	что эквивалентно
+	\begin{equation}
+		\left\|\bold{x}^{\left(m\right)}-\bold{x}^{\left(m-1\right)}\right\|<\varepsilon_2,
+	\end{equation}
+	где $\varepsilon_2=\dfrac{1-\left\|\bold{B}\right\|}{\left\|\bold{B}_2\right\|}\varepsilon$.
+	
+	\subsection*{Геометрическая интерпретация}
+	
+	Не дописано!
+	Пусть размерность матрицы $\bold{A}$ в уравнении (\ref{f1}) --- $2\times2$.
+	В таком случае решаем систему
+	\begin{equation}
+		\begin{gathered}
+			a_{11}x_1+a_{12}x_2=b_1,\\
+		\end{gathered}\label{fm13}
+	\end{equation}
+	\begin{equation}
+		a_{21}x_1+a_{22}x_2=b_2.\label{fm14}
+	\end{equation}
+	Тогда расчетные формулы метода Зейделя имеют вид
+	\begin{equation}
+		\begin{matrix}
+			x_1^{\left(k+1\right)} & = & & b_{12}x_2^{\left(k\right)} & + & c_1, \\
+			x_2^{\left(k+1\right)} & = & b_{21}x_1^{\left(k+1\right)} & & + & c_2,
+		\end{matrix}
+	\end{equation}
+	где $b_{12}=-a_{12}/a_{11}$, $c_1=b_1/a_{11}$, $b_{21}=-a_{21}/a_{22}$, $c_2=b_2/a_{22}$.
+	
+	Уравнение (\ref{fm13}) задает на плоскости прямую $l_1$, уравнение (\ref{fm14}) --- прямую $l_2$ (см. рисунок, которого нет).
+	
+	\subsection*{Необходимое и достаточное условие сходимости}
+	
+	Метод Зейделя можно записать в эквивалентном виде
+	\begin{equation}
+		\bold{x}^{\left(k+1\right)}=\widetilde{\bold{B}}\bold{x}^{\left(k\right)}+\widetilde{\bold{c}},
+	\end{equation}
+	где
+	\begin{equation}
+		\widetilde{\bold{B}}=\left(\bold{E}-\bold{B}_1\right)^{-1}\bold{B}_2,\quad \widetilde{\bold{c}}=\left(\bold{E}-\bold{B}_1\right)^{-1}\bold{c}\label{fm16}
+	\end{equation}
+	В форме (\ref{fm16}) метод Зейделя представляет собой метод простой итерации. Поэтому в силу теоремы из предыдущей практической работы (\#8.1) --- необходимым и достаточным условием сходимости метода является выполнение неравенства $\rho\left(\widetilde{\bold{B}}\right)<1$. Поскольку собственные числа матрицы
+	$\widetilde{\bold{B}}$ совпадают с числами $\lambda$, являющимися решениями обобщенной задачи на собственные значения 
+	\begin{equation}
+	\bold{B}_2\bold{x}=\lambda\left(\bold{E}-\bold{B}_1\right)\bold{x},\label{fm17}
+	\end{equation}
+	справедлива следующая теорема.
+	\begin{theorem}
+		Метод Зейделя сходится при любом начальном приближении $\bold{x}^{\left(0\right)}$ тогда и только тогда, когда все решения обобщенной задачи на собственные значения (\ref{fm17}) по модулю меньше единицы.
+	\end{theorem}
+	
+	\subsection*{Задания}
+	
+	\begin{enumerate}
+		\item Привести несколько входных данных, показать их различия. Оценить их. Интересны матрицы, близкие к диагональным, близкие к нижним треугольным.
+		\item Реализовать метод Зейделя, при вычислениях показать промежуточные результаты каждой итерации. Оценить сходимость метода на каждом шаге и указать сколько итераций потребовалось для достижение некоторой точности.
+		\item Требуемая точность приближенного решения $10^{-3}$, $10^{-6}$.
+		\item Сравнить с методом простой итерации.
+	\end{enumerate}
+
+
+    \renewcommand{\bibname}{{Список литературы}}
+    \bibliographystyle{gost2008}
+    \begin{thebibliography}{33}
+        \bibitem{lebedeva}
+        Лебедева А. В., Пакулина А. Н. Практикум по методам вычислений. Часть 1. Учебно-методическое пособие. СПб.: Санкт-Петербургский государственный университет, 2021.~156 с.
+        
+        \bibitem{Mis}
+        Мысовских И. П. Лекции по методам вычислений: Учебное пособие. СПб.: Издательство Санкт-Петербургского университета, 1998. 472~с.
+        
+        \bibitem{Fadeev}
+        Фаддеев Д. К., Фаддеева В. Н. Вычислительные методы линейной алгебры. М.:  Государственное издательство физико-математической литературы, 1960. 655 с.
+    \end{thebibliography}
+\end{document}
