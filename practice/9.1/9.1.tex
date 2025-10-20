@@ -1,0 +1,251 @@
+\documentclass[12pt]{article}
+
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{array,graphicx,dcolumn,multirow,abstract,hanging,fancyhdr,float}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{indentfirst}
+
+\newtheorem{theorem}{Теорема}
+
+\DeclareMathOperator{\cond}{cond}
+\DeclareMathOperator{\grad}{grad}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+
+\begin{document}
+    \begin{flushright}
+		%%.{version}.%%
+	\end{flushright}
+	\begin{flushright}
+		%%.{date}.%%
+	\end{flushright}
+    \section*{Вычислительный практикум}
+    \section*{Практическое занятие \#9.1. Частичная проблема собственных значений. Степенной метод}
+
+	\subsection*{Постановка задачи}
+	
+	Пусть требуется вычислить максимальное по модулю собственное число $\lambda_1$ матрицы $\bold{A}$, причем известно, что
+	\begin{equation}
+		\left|\lambda_1\right|>\left|\lambda_2\right|\geqslant\left|\lambda_3\right|\geqslant\ldots\geqslant\left|\lambda_n\right|.\label{fm0}
+	\end{equation}
+	
+	\subsection*{Локализация собственных чисел}
+	
+	Введем следующие обозначения 
+	\begin{equation}
+		r_i=\sum_{\substack{j=1\\j\neq 1}}^{n}\left|a_{ij}\right|,
+	\end{equation}
+	\begin{equation}
+		S_i=\left\{z\in C : \left|z-a_{ii}\right|\leqslant r_i \right\}.
+	\end{equation}
+	Будем называть круги $S_i$ кругами Гершгорина. Справедлива следующая теорема.	
+	\begin{theorem}[теорема Гершгорина]
+		Все собственные числа матрицы $\bold{A}$ лежат в объединении кругов $S_1$, $S_2$, $\ldots$, $S_n$.
+	\end{theorem}
+	Доказательство. Возьмем произвольное значение $\lambda$ матрицы $\bold{A}$ и соответствующий собственный вектор $\bold{x}$. Пусть $x_i$ --- максимальная по модулю координата вектора $\bold{x}$. Запишем $i$-е уравнение системы $\bold{Ax}=\lambda\bold{x}$ в следующем виде
+	\begin{equation}
+		(a_{ii}-\lambda)x_i=-\sum_{j\neq i}^{}a_{ij}x_j.
+	\end{equation}
+	Из этого равенства с учетом оценки $\left|x_j/x_i\right|\leqslant 1$ следует неравенство
+	\begin{equation}
+		\left|a_{ii}-\lambda\right|\leqslant\sum_{j\neq 1}\left|a_{ij}\right|\left|\frac{x_j}{x_i}\right|\leqslant r_i.
+	\end{equation}
+	Таким образом, $\lambda\in S_i$. Теорема доказана.
+	
+	\begin{theorem}
+		Если $k$ кругов Гершгорина образуют замкнутую область $G$, изолированную от других кругов, то в области $G$ находится ровно~$k$ собственных значений $\bold{A}$ (с учетом их кратности).
+	\end{theorem}
+	
+	Следствие. Если какой-либо круг Гершгорина изолирован, то он содержит ровно одно собственное значение матрицы $\bold{A}$.
+	
+	\subsection*{Отношение Рэлея}
+	Введем в рассмотрение отношение Рэлея 
+	\begin{equation}
+		\rho\left(\bold{x}\right)=\frac{\left(\bold{Ax},\bold{x}\right)}{\left(\bold{x},\bold{x}\right)}.\label{fm56}
+	\end{equation}
+	\begin{theorem}
+		Пусть $\bold{A}$ --- симметричная матрица. Тогда справедливы следующие утверждения:
+		\begin{enumerate}
+			\item минимальное и максимальное собственные числа матрицы $\bold{A}$ вычисляются по формулам
+			\begin{equation}
+				\lambda_{\min}=\min_{\bold{x}\neq 0}\rho\left(\bold{x}\right),\quad \lambda_{\max}=\max_{\bold{x}\neq 0}\rho\left(\bold{x}\right);
+			\end{equation}
+			\item вектор $\bold{x}$ является стационарной точкой функции $\rho\left(\bold{x}\right)$ (удовлетворяет условию $\grad\rho\left(\bold{x}\right)=0$) тогда и только тогда, когда $\bold{x}$ --- собственный вектор матрицы $\bold{A}$.
+		\end{enumerate}
+	\end{theorem}
+	
+	Если $\bold{x}$ --- хорошее приближение к $\bold{e}_j$, то $\rho\left(\bold{x}\right)$ --- хорошее приближение к собственному числу $\lambda_j$.
+	
+	\subsection*{Обусловленность задачи вычисления собственных значений и собственных векторов}
+	
+	Обозначим $\bold{A}^{*}$ --- матрица с приближенно заданными элементами $a^{*}_{ij}\approx a_{ij}$ с собственными числами $\lambda^{*}_{j}$.
+	\begin{theorem}
+		Пусть $\bold{A}$ и $\bold{A}^{*}$ --- симметричные матрицы, тогда
+		\begin{equation}
+			\max_{1\leqslant j \leqslant n}\left|\lambda_j-\lambda_{j}^{*}\right|\leqslant\left\|\bold{A}-\bold{A}^{*}\right\|_2,
+		\end{equation}
+		\begin{equation}
+			\left(\sum_{j=i}^{n}\left(\lambda_j-\lambda_j^{*}\right)^2\right)^{1/2}\leqslant\left\|\bold{A}-\bold{A}^{*}\right\|_E.
+		\end{equation}
+	\end{theorem}
+	Отсюда следует, что задача вычисления собственных чисел симметричных матриц очень хорошо обусловлена.
+	
+	\begin{theorem}
+		Пусть $\bold{P}^{-1}\bold{AP}=\bold{D}$, где $\bold{D}$ --- диагональная матрица из собственных чисел матрицы $\bold{A}$. Тогда каждое собственное число матрицы $\bold{A}^{*}$ удалено от некоторого собственного числа матрицы $\bold{A}$ не более чем на $d=\cond_2\left(\bold{P}\right)\left\|\bold{A}-\bold{A}^{*}\right\|_2$.
+	\end{theorem}
+	
+	В качестве меры близости $\bold{x}^{*}$ и $\bold{x}$ рассматривают величину $\left|\sin\varphi\right|$, где $\varphi$ --- угол между этими векторами, вычисляемый по формуле
+	\begin{equation}
+		\varphi=\arccos\left(\frac{\left(\bold{x}^{*},\bold{x}\right)}{\left\|\bold{x}^{*}\right\|_2\left\|\bold{x}\right\|_2}\right).
+	\end{equation}
+	
+	Задача вычисления собственных векторов симметричной матрицы хорошо обусловлена, если собственные числа хорошо отделены друг от друга. Приведем теорему.
+	\begin{theorem}
+		Пусть $\bold{A}$ и $\bold{A}^{*}$ --- симметричные матрицы. Тогда верна оценка
+		\begin{equation}
+			\left|\sin\varphi\right|\leqslant\frac{\left\|\bold{A}-\bold{A}^{*}\right\|_2}{\gamma},
+		\end{equation}
+		где $\gamma$ --- расстояние от $\lambda^{*}$ до ближайшего из несовпадающих с $\lambda$ собственны чисел матрицы $\bold{A}$.
+	\end{theorem}
+	Если матрица $\bold{A}$ несимметрична, собственные векторы могут оказаться очень плохо обусловленными.
+	
+	\subsection*{Степенной метод}
+	
+	Возьмем произвольный вектор $\bold{x}^{\left(0\right)}\neq 0$ и построим последовательность векторов $\left\{\bold{x}^{\left(k\right)}\right\}^{\infty}_{k=0}$ и приближений $\left\{\lambda_1^{\left(k\right)}\right\}_{k=1}^{\infty}$ к $\lambda_1$, использовав формулы
+	\begin{equation}
+		\bold{x}^{\left(k\right)}=\bold{Ax}^{\left(k-1\right)},\label{fm2}
+	\end{equation}
+	\begin{equation}
+		\lambda_1^{\left(k\right)}=\frac{\left(\bold{x}^{\left(k\right)},\bold{x}^{\left(k-1\right)}\right)}{\left(\bold{x}^{\left(k-1\right)},\bold{x}^{\left(k-1\right)}\right)}.\label{fm3}
+	\end{equation}
+	Заметим, что правая часть формулы (\ref{fm3}) --- это отношение Рэлея (\ref{fm56}), вычисленное при $\bold{x}=\bold{x}^{\left(k-1\right)}$. Действительно,
+	\begin{equation}
+		\lambda_1^{\left(k\right)}=\frac{\left(\bold{Ax}^{\left(k-1\right)},\bold{x}^{\left(k-1\right)}\right)}{\left(\bold{x}^{\left(k-1\right)},\bold{x}^{\left(k-1\right)}\right)}=\rho\left(\bold{x}^{\left(k-1\right)}\right).
+	\end{equation}
+	Справедлива теорема.
+	\begin{theorem}\label{th7}
+		Пусть $\bold{A}$ --- матрица простой структуры, для которой выполнено условие (\ref{fm0}). Предположим, что в разложении
+		\begin{equation}
+			\bold{x}^{\left(0\right)}=c_1\bold{e}_1+c_2\bold{e}_2+\ldots+c_n\bold{e}_n=\sum_{i=1}^{n}c_i\bold{e}_i\label{fm5}
+		\end{equation}
+		по нормированному базису из собственных векторов коэффициент\linebreak $c_1~\neq~0$. Тогда $\lambda_1^{\left(k\right)}\rightarrow \lambda_1$ при $k\rightarrow\infty$ и при всех $k\geqslant k_0\left(\bold{x}^{\left(0\right)}\right)$ верна оценка относительной погрешности
+		\begin{equation}
+			\delta\left(\lambda_1^{\left(k\right)}\right)=\frac{\left|\lambda_1^{\left(k\right)}-\lambda_1\right|}{\lambda_1}\leqslant C_0\left|\frac{\lambda_2}{\lambda_1}\right|^{k-1},\label{fm6}
+		\end{equation}
+		где $C_0=4\sum_{i=2}^{n}\left|\alpha_i\right|$, $\alpha_i=c_i/c_1$, $2\leqslant i \leqslant n$.
+	\end{theorem}
+	Доказательство. Вектор $\bold{x}^{k}$ удовлетворяет равенству $\bold{x}^{\left(k\right)}=\bold{A}^{k}\bold{x}^{\left(0\right)}$ ($k$-ю степень матрицы $\bold{A}$ умножают на $\bold{x}^{\left(0\right)}$, отсюда название метода). Так как $\bold{Ae}_i=\lambda_i\bold{e}_i$, то $\bold{A}^k\bold{e}_i=\lambda_i^k\bold{e}_i$ и из разложения (\ref{fm5}) следует
+	\begin{equation}
+		\bold{x}^{\left(k\right)}=\lambda_1^k c_1 \bold{e}_1+\sum_{i=2}^{n}\lambda_i^kc_i\bold{e}_i.
+	\end{equation}
+	Положим $\mu_i=\lambda_i/\lambda_1$, $2\leqslant i \leqslant n$ и
+	\begin{equation}
+		\bold{z}^{\left(k\right)}=\frac{\bold{x}^{\left(k\right)}}{\lambda_1^{\left(k\right)}c_1}=\bold{e}_1+\sum_{i=2}^{n}\mu_i^{k}\alpha_i\bold{e}_i.\label{fm8}
+	\end{equation}
+	Заметим, что
+	\begin{equation}
+		\bold{z}^{\left(k\right)}-\bold{z}^{\left(k-1\right)}=\sum_{i=2}^{n}\left(\mu_i-1\right)\mu_i^{k-1}\alpha_i\bold{e}_i.\label{fm9}
+	\end{equation}
+	
+	Так как $\left|\mu_i\right|\leqslant \left|\mu_2\right| < 1$ для всех $2\leqslant i \leqslant n$, а базис нормированный ($\left\|\bold{e}_i\right\|_2=1$ для всех $i$), то из (\ref{fm8}) и (\ref{fm9}) следует, что
+	\begin{equation}
+		\left\|\bold{z}^{\left(k\right)}\right\|_2\geqslant \left\|\bold{e}_1\right\|_2-\sum_{i=2}^{n}\left|\mu_i\right|^{k}\left|\alpha_i\right|\left\|\bold{e}_i\right\|_2\geqslant 1 -\left|\mu_2\right|^{k}\sum_{i=2}^{n}\left|\alpha_i\right|=1-\frac{1}{4}C_0\left|\mu_2\right|^k,\label{fm10}
+	\end{equation}
+	\begin{equation}
+		\left\|\bold{z}^{\left(k\right)}-\bold{z}^{\left(k-1\right)}\right\|_2\leqslant 2\left|\mu_2\right|^{k-1}\sum_{i=2}^{n}\left|\alpha_i\right|\left\|\bold{e}_i\right\|_2=2\left|\mu_2\right|^{k-1}\sum_{i=2}^{n}\left|\alpha_i\right|=\frac{1}{2}C_0\left|\mu_2\right|^{k-1}.
+	\end{equation}
+	
+	Выберем $k_0=k_0\left(\bold{x}^{\left(0\right)}\right)$ таким, чтобы $\left|\mu_2\right|^{k_0-1}C_0\leqslant 2$. Тогда для всех $k\geqslant k_0$ в силу неравенства (\ref{fm10}) будет справедливо неравенство $\left\|\bold{z}^{\left(k-1\right)}\right\|_2\geqslant 1/2$. Осталось заметить, что
+	\begin{equation}
+		\begin{gathered}
+		\delta\left(\lambda_1^{\left(k\right)}\right)=\left|\frac{\lambda_1^{\left(k\right)}}{\lambda_1}-1\right|=\left|\frac{\left(\bold{x}^{\left(k\right)},\bold{x}^{\left(k-1\right)}\right)}{\lambda_1 \left(\bold{x}^{\left(k-1\right)},\bold{x}^{\left(k-1\right)}\right)}-1\right|=\left|\frac{\left(\bold{z}^{\left(k\right)},\bold{z}^{\left(k-1\right)}\right)}{\left(\bold{z}^{\left(k-1\right)},\bold{z}^{\left(k-1\right)}\right)}-1\right|=\\
+		=\frac{\left|\left(\bold{z}^{\left(k\right)}-\bold{z}^{\left(k-1\right)},\bold{z}^{\left(k-1\right)}\right)\right|}{\left\|\bold{z}^{\left(k-1\right)}\right\|^2_2}\leqslant\frac{\left\|\bold{z}^{\left(k\right)}-\bold{z}^{\left(k-1\right)}\right\|_2}{\left\|\bold{z}^{\left(k-1\right)}\right\|_2}\leqslant C_0\left|\mu_2\right|^{k-1}.
+		\end{gathered}
+	\end{equation}
+	Здесь для вывода оценки воспользовались неравенством Коши --- Буняковского $\left|\left(\bold{x},\bold{y}\right)\right|\leqslant \left\|\bold{x}\right\|_2\left\|\bold{y}\right\|_2$ для $\bold{x}=\bold{z}^{\left(k\right)}-\bold{z}^{\left(k-1\right)}$ и $\bold{y}=\bold{z}^{\left(k-1\right)}$.
+	
+	\subsubsection*{Замечания}
+	\begin{enumerate}
+		\item Если выполнены условия теоремы~\ref{th7} и матрица $\bold{A}$ симметрична, то оценка (\ref{fm6}) верна уже при всех $k\geqslant 1$ с постоянной $C_0=\sqrt{\sum_{i=2}^{n}\left|\alpha_i\right|^2}$.
+		\item При выполнении условия (\ref{fm0}) оценка (\ref{fm6}) (с другой постоянной $C_0$) верна и для произвольной матрицы, а не только для матрицы простой структуры.
+		\item Если $\left\|\lambda_1\right\|>1$, то $\left\|\bold{x}^{\left(k\right)}\right\|_2\rightarrow \infty$ при $k\rightarrow\infty$ --- при вычислении на компьютере возможно переполнение. Если же $\left\|\lambda_1\right\|<1$, то $\left\|\bold{x}^{\left(k\right)}\right\|_2\rightarrow 0$ и возможно исчезновение порядка. Для предупреждения этих ситуаций обычно вектор $\bold{x}^{\left(k\right)}$ нормируют так, чтобы $\left\|\bold{x}^{\left(k\right)}\right\|_2=1$ для всех $k\geqslant 1$. Одна из возможных модификаций такова:
+		\begin{equation}
+			\bold{y}^{\left(k\right)}=\bold{Ax}^{\left(k-1\right)},\quad \lambda^{\left(k\right)}=\left(\bold{y}^{\left(k\right)},\bold{x}^{\left(k-1\right)}\right),\quad \bold{x}^{\left(k\right)}=\frac{\bold{y}^{\left(k\right)}}{\left\|\bold{y}^{\left(k\right)}\right\|_2}\label{fm23}
+		\end{equation}
+		Предполагается, что $\left\|\bold{x}^{\left(0\right)}\right\|_2=1$.\label{fm13}
+		
+		Теорема~\ref{th7} остается справедливой для метода (\ref{fm13}). Кроме этого, последовательность $\bold{x}^{\left(k\right)}$ сходится к собственному вектору по направлению, то есть $\varphi^{\left(k\right)}\rightarrow 0$ при $k\rightarrow\infty$, где $\varphi^{\left(k\right)}$ --- угол между векторами $\bold{x}^{\left(k\right)}$ и $\bold{e}_1$.
+	\end{enumerate}
+	
+	\subsection*{Апостериорная оценка погрешности}
+	
+	\begin{theorem}
+		Пусть $\lambda^{*}$ --- произвольное число, а $\bold{x}^{*}$ --- произвольный ненулевой вектор. Тогда для любой симметричной матрицы $\bold{A}$ существует собственное значение этой матрицы $\lambda$ такое, что справедлива оценка
+		\begin{equation}
+			\left|\lambda-\lambda^{*}\right|\leqslant\frac{\left\|\bold{Ax}^{*}-\lambda^{*}\bold{x}^{*}\right\|_2}{\left\|\bold{x}^{*}\right\|_2}.\label{fm14}
+		\end{equation}
+	\end{theorem}
+	
+	Если $\bold{x}^{*}$ --- приближенно вычисленный собственный вектор, то неравенство (\ref{fm14}) позволяет дать простую апостериорную оценку погрешности вычисленного собственного числа $\lambda^{*}$. В частности, для степенного метода (\ref{fm2}), (\ref{fm3}) из (\ref{fm14}) следует такая апостериорная оценка
+	\begin{equation}
+		\left|\lambda_1-\lambda_1^{\left(k\right)}\right|\leqslant\frac{\left\|\bold{x}^{\left(k\right)}-\lambda_1^{\left(k\right)}{\bold{x}^{\left(k-1\right)}}\right\|_2}{\left\|\bold{x}^{\left(k-1\right)}\right\|_2}
+	\end{equation}
+	
+	Обозначим вектор невязки
+	\begin{equation}
+		\bold{r}=\bold{A}\bold{x}^{*}-\rho^{*}\bold{x}^*,
+	\end{equation}
+	тогда
+	\begin{equation}
+		\sigma=\frac{\left\|\bold{r}\right\|_2}{\left\|\bold{x}^{*}\right\|_2}.
+	\end{equation}
+	Если собственное число $\lambda$ хорошо отделено от остальные, то можно использовать следующую теорему.
+	
+	\begin{theorem}
+		Пусть $\lambda$ --- ближайшее к $\rho^{*}$ собственное число матрицы~$\bold{A}$, $\bold{x}$ --- соответствующий собственный вектор и $\varphi$ --- угол между $\bold{x}^{*}$ и  $\bold{x}$. Тогда справедливы оценки
+		\begin{equation}
+			\left|\sin\varphi\right|\leqslant\frac{\sigma}{\gamma},\quad \left|\lambda-\rho^{*}\right|\leqslant\frac{\sigma^2}{\gamma}.
+		\end{equation}
+		Здесь $\gamma=\min_{\lambda_i\neq\lambda}\left|\lambda_i-\rho^{*}\right|$ --- расстояние от $\rho^{*}$ до ближайшего из отличных от $\lambda$ собственных значений матрицы $\bold{A}$.
+	\end{theorem}
+	
+	\begin{theorem}
+		Пусть $\bold{A}$ --- симметричная матрица, $\bold{x}^{*}$ --- произвольный ненулевой вектор, $\rho^{*}=\rho\left(\bold{x}^{*}\right)$. Тогда $\rho^{*}$ и $\bold{x}^{*}$ являются точными собственными числом и вектором некоторой симметричной матрицы $\bold{A}^{*}$, для которой
+		\begin{equation}
+			\left\|\bold{A}-\bold{A}^{*}\right\|_2=\sigma.
+		\end{equation}
+	\end{theorem}
+	Пусть известен порядок
+	\begin{equation}
+		\varepsilon=\left\|\bold{A}-\widetilde{\bold{A}}\right\|_2
+	\end{equation}
+	и для найденной пары $\bold{x}^{*}$, $\rho^{*}=\rho^{*}\left(\bold{x}\right)$ величина
+	\begin{equation}
+		\sigma=\frac{\left\|\bold{A}\bold{x}^{*}-\rho^{*}\bold{x}^{*}\right\|_2}{\left\|\bold{x}\right\|_2}
+	\end{equation}
+	оказывается сравнимой с $\varepsilon$ или даже меньше ее.
+	
+	\subsection*{Задания}
+	
+	\begin{enumerate}
+		\item Реализовать степенной метод (\ref{fm2}), (\ref{fm3}), а также его модификацию (\ref{fm23}).
+		\item Подготовить входные данные, на которых возможно показать различие между (\ref{fm2}), (\ref{fm3}) и (\ref{fm23}).
+		\item Найти степенным методом с заданной точностью $\varepsilon$ максимальное по модулю собственное число $\lambda_1$ матрицы $\bold{A}$ и соответствующий ему собственный вектор $\bold{e}_1$, так чтобы $\left\|\bold{e}_1\right\|_2=1$.
+	\end{enumerate}
+	
+    \renewcommand{\bibname}{{Список литературы}}
+    \bibliographystyle{gost2008}
+    \begin{thebibliography}{3}
+        \bibitem{lebedeva}
+        Лебедева А. В., Пакулина А. Н. Практикум по методам вычислений. Часть 1. Учебно-методическое пособие. СПб.: Санкт-Петербургский государственный университет, 2021.~156 с.
+        
+        \bibitem{Mis}
+        Мысовских И. П. Лекции по методам вычислений: Учебное пособие. СПб.: Издательство Санкт-Петербургского университета, 1998. 472~с.
+        
+        \bibitem{Fadeev}
+        Фаддеев Д. К., Фаддеева В. Н. Вычислительные методы линейной алгебры. М.:  Государственное издательство физико-математической литературы, 1960. 655 с.
+    \end{thebibliography}
+\end{document}

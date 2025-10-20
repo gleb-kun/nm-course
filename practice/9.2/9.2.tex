@@ -1,0 +1,136 @@
+\documentclass[12pt]{article}
+
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{array,graphicx,dcolumn,multirow,abstract,hanging,fancyhdr,float}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{indentfirst}
+
+\newtheorem{theorem}{Теорема}
+
+\DeclareMathOperator{\cond}{cond}
+\DeclareMathOperator{\grad}{grad}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+
+\begin{document}
+	\begin{flushright}
+		%%.{version}.%%
+	\end{flushright}
+	\begin{flushright}
+		%%.{date}.%%
+	\end{flushright}
+    \section*{Вычислительный практикум}
+    \section*{Практическое занятие \#9.2. Частичная проблема собственных значений. Метод обратных итераций}
+
+	\subsection*{Постановка задачи}
+	
+	Допустим у нас есть достаточно хорошее приближение $\lambda_j^{*}$ к собственному числу $\lambda_j$. И нам необходимо найти собственный вектор $\bold{e}_j$.
+	
+	Если исходить из определения, то решаем
+	\begin{equation}
+		\left(\bold{A}-\lambda_j\bold{E}\right)\bold{x}=0
+	\end{equation}
+	с вырожденной матрицей $\bold{A}-\lambda_j\bold{E}$. В нашем случае
+	\begin{equation}
+		\left(\bold{A}-\lambda_j^{*}\bold{E}\right)\bold{x}=0.\label{fm2}
+	\end{equation}
+	Так как матрица $\bold{A}-\lambda_j^{*}\bold{E}$ заведомо невырождена, то решением системы~ (\ref{fm2}) является только $\bold{x}=0$. Следовательно, непосредственное численное решение системы (\ref{fm2}) не дает возможности вычислить собственный вектор.
+	
+	\subsubsection*{Метод обратных итераций}
+	
+	В методе приближения к собственному вектору определяются последовательным решением систем уравнений
+	\begin{equation}
+		\left(\bold{A}-\lambda_j^{*}\bold{E}\right)\bold{y}^{\left(k+1\right)}=\bold{x}^{\left(k\right)}\label{fm6}
+	\end{equation}
+	с последующей нормировкой решения
+	\begin{equation}
+		\bold{x}^{\left(k+1\right)}=\frac{\bold{y}^{\left(k+1\right)}}{\left\|\bold{y}^{\left(k+1\right)}\right\|_2}.
+	\end{equation}
+	
+	В качестве начального приближения берут ненулевой произвольный вектор $\bold{x}^{\left(0\right)}$. Можно взять $\bold{x}^{\left(0\right)}=\left(1\quad 1\quad \ldots\quad 1\right)^T$.
+	
+	Механизм действия метода состоит в следующем. Рассмотрим случай, когда $\bold{A}$ --- матрица простой структуры, а $\lambda_j$ --- простое собственное значение. Представим векторы $\bold{x}^{\left(0\right)}$ и $\bold{y}^{\left(1\right)}$ в виде линейных комбинаций собственных векторов $\bold{e}_1, \bold{e}_2,\ldots,\bold{e}_n$
+	\begin{equation}
+		\bold{x}^{\left(0\right)}=\sum_{i=1}^{n}c_i\bold{e}_i,\quad \bold{y}^{\left(1\right)}=\sum_{i=1}^{n}\alpha_i\bold{e}_i.
+	\end{equation}
+	
+	Так как $\left(\bold{A}-\lambda_j^{*}\bold{E}\right)\bold{y}^{\left(1\right)}=\sum_{i=1}^{n}\alpha_i\left(\lambda_i-\lambda_j^{*}\right)\bold{e}_i$, то систему уравнений (\ref{fm6}) при $k=0$ можно записать в виде
+	\begin{equation}
+		\sum_{i=1}^{n}\alpha_i\left(\lambda_i-\lambda_j^{*}\right)\bold{e}_i=\sum_{i=1}^{n}c_i\bold{e}_i.
+	\end{equation}
+	Приравнивая коэффициенты при $\bold{e}_i$, получаем $\alpha=\dfrac{c_i}{\lambda_i-\lambda_j^{*}}$. Отсюда следует
+	\begin{equation}
+		\bold{y}^{\left(1\right)}=\sum_{i=1}^{n}\frac{c_i}{\lambda_i-\lambda_j^{*}}\bold{e}_i=\frac{1}{\lambda_j-\lambda_j^{*}}\left(c_j\bold{e}_j+\sum_{\substack{i=1\\i\neq j}}^{n}\frac{\lambda_j-\lambda_j^{*}}{\lambda_i-\lambda_j^{*}}c_i\bold{e}_i\right).\label{fm7}
+	\end{equation}
+	
+	Если $\left|\lambda_j-\lambda_j^{*}\right| \ll \left|\lambda_i-\lambda_j^{*}\right|$ для всех $i\neq j$, то второе слагаемое в правой части (\ref{fm7}) мало по сравнению с первым. Поэтому
+	\begin{equation}
+		\bold{y}^{\left(1\right)}\approx\frac{c_j}{\lambda_j-\lambda_j^{*}}\bold{e}^{j}
+	\end{equation}
+	и вектор $\bold{y}^{\left(1\right)}$ оказывается близким по направлению к собственному вектору $\bold{e}_j$.
+	
+	Можно показать, что вектор $\bold{x}^{\left(k\right)}$, вычисляемый на $k$-й итерации имеет вид
+	\begin{equation}
+		\bold{x}^{\left(k\right)}=\beta^{\left(k\right)}\left(c_j\bold{e}_j+\sum_{\substack{i=1\\i\neq j}}^{n}\left(\frac{\lambda_j-\lambda_j^{*}}{\lambda_i-\lambda_j^{*}}\right)^k c_i\bold{e}_i\right),
+	\end{equation}
+	где $\left|\beta^{\left(k\right)}\right|\rightarrow \left|c_j^{-1}\right|$ при $k\rightarrow\infty$. Вектор $\bold{x}^{\left(k\right)}$ сходится к $\bold{e}_j$ по направлению со скоростью геометрической прогрессии, знаменатель которой
+	\begin{equation}
+		q=\max_{i\neq j}\frac{\left|\lambda_j-\lambda_j^{*}\right|}{\left|\lambda_i-\lambda_j^{*}\right|}.
+	\end{equation}
+	
+	Если абсолютная погрешность значения $\lambda_j^{*}$ много меньше расстояния от $\lambda_j$ до ближайшего из остальных собственных чисел (что эквивалентно условию $\left|\lambda_j-\lambda_j^{*}\right|\ll \left|\lambda_j-\lambda_j^{*}\right|$ для всех $i\neq j$), то метод обратных итераций сходится очень быстро. Чаще всего достаточно сделать 1--3 итерации.
+	
+	\subsection*{Замечания}
+	
+	\begin{enumerate}
+		\item Так как $\lambda_j^{*}$ почти совпадает со значением $\lambda_j$, при котором \begin{equation}\det\left(\bold{A}-\lambda_j\bold{E}\right)=0,\end{equation} то матрица $\bold{A}-\lambda_j^{*}\bold{E}$ очень плохо обусловлена. Казалось бы, это плохо, но не тут-то было. Погрешность возникающая при численном решении системы (\ref{fm6}) (которая может быть сравнима по величине с $\bold{y}^{\left(k\right)}$), оказывается почти пропорциональной к вектору $\bold{e}_j$. В данном случае плохая обусловленность системы не ухудшает, а улучшает ситуацию.
+		\item Записывая равенство (\ref{fm6}) в виде $\bold{y}^{\left(k+1\right)}=\left(\bold{A}-\lambda_j^{*}\bold{E}\right)^{-1}\bold{x}^{\left(k\right)}$, замечаем, что метод обратных итераций --- это просто степенной метод, примененный к матрице $\left(\bold{A}-\lambda_j^{*}\bold{E}\right)^{-1}$.
+	\end{enumerate}
+	
+	\subsection*{Метод обратных итераций с использованием отношение Рэлея}
+	
+	Одной из проблем применения метод обратных итераций является необходимость получения хорошего приближения к собственному значению. Когда $\bold{A}$ --- симметричная матрица, можно попытаться использовать для оценки $\lambda_j$ отношение Рэлея, напомним, что
+	\begin{equation}
+		\rho\left(\bold{x}\right)=\frac{\left(\bold{Ax},\bold{x}\right)}{\left(\bold{x},\bold{x}\right)}.
+	\end{equation}
+	
+	Такой подход приводит к следующему методу
+	\begin{equation}
+		\lambda^{\left(k+1\right)}=\rho\left(\bold{x}^{\left(k\right)}\right)=\left(\bold{Ax}^{\left(k\right)},\bold{x}^{\left(k\right)}\right),\quad k\geqslant 0;\label{fm13}
+	\end{equation}	
+	\begin{equation}
+		\left(\bold{A}-\lambda^{\left(k+1\right)}\bold{E}\right)\bold{y}^{\left(k+1\right)}=\bold{x}^{\left(k\right)};
+	\end{equation}
+	\begin{equation}
+		\bold{x}^{\left(k+1\right)}=\frac{\bold{y}^{\left(k+1\right)}}{\left\|\bold{y}^{\left(k+1\right)}\right\|_2}.\label{fm15}
+	\end{equation}
+	Предполагается, что $\left\|\bold{x}^{\left(0\right)}\right\|=1$.
+	
+	Если начальное приближение $\bold{x}^{\left(0\right)}$ хорошо аппроксимирует по направлению вектор $\bold{e}_j$, то метод (\ref{fm13})--(\ref{fm15}) сходится очень быстро. Например, если $\lambda_j$ --- простое собственное число, то сходимость оказывается кубической. Одним из способов получения удовлетворительного начального приближения является выполнение нескольких итераций степенного метода.
+	
+	Заметим, что в случае, когда метод сходится, он позволяет одновременно вычислять и собственное число $\lambda_j$ и соответствующих собственный вектор $\bold{e}_j$.	
+	
+	\subsection*{Задания}
+	
+	\begin{enumerate}
+		\item Реализовать метод обратных итераций.
+		\item Используя предварительно найденное собственное число, например можно взять максимальное по модулю собственное число, найденное степенным методом, найти собственный вектор $\bold{e}_1$, так чтобы $\left\|\bold{e}_1\right\|_2=1$.
+		\item Реализовать модификацию метода обратных итераций с отношением Рэлея, подобрать начальной приближение $\bold{x}^{\left(0\right)}$ и вычислить собственное число $\lambda_j$ и собственный вектор $\bold{e}_1$, так чтобы $\left\|\bold{e}_1\right\|_2=1$.
+	\end{enumerate}
+	
+    \renewcommand{\bibname}{{Список литературы}}
+    \bibliographystyle{gost2008}
+    \begin{thebibliography}{3}
+        \bibitem{lebedeva}
+        Лебедева А. В., Пакулина А. Н. Практикум по методам вычислений. Часть 1. Учебно-методическое пособие. СПб.: Санкт-Петербургский государственный университет, 2021.~156 с.
+        
+        \bibitem{Mis}
+        Мысовских И. П. Лекции по методам вычислений: Учебное пособие. СПб.: Издательство Санкт-Петербургского университета, 1998. 472~с.
+        
+        \bibitem{Fadeev}
+        Фаддеев Д. К., Фаддеева В. Н. Вычислительные методы линейной алгебры. М.:  Государственное издательство физико-математической литературы, 1960. 655 с.
+    \end{thebibliography}
+\end{document}
