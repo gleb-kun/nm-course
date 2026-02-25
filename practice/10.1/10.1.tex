@@ -1,0 +1,418 @@
+\documentclass[12pt]{article}
+
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{array,graphicx,dcolumn,multirow,abstract,hanging,fancyhdr,float}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{indentfirst}
+
+\newtheorem{theorem}{Теорема}
+\newtheorem{corollary}{Следствие}
+
+\DeclareMathOperator{\cond}{cond}
+\DeclareMathOperator{\grad}{grad}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+
+\begin{document}
+	\begin{flushright}
+		%%.{version}.%%
+	\end{flushright}
+	\begin{flushright}
+		%%.{date}.%%
+	\end{flushright}
+    \section*{Вычислительный практикум}
+    \section*{Практическое занятие \#10.1. Сингулярное разложение матриц}
+	
+	\subsection*{Сингулярное разложение}
+	
+	В сингулярном разложении (SVD, Singular Value Decomposition) исходная матрица представляется в виде произведения двух ортогональных матриц и диагональной (с сингулярными числами).
+	
+	Далее будем использовать евклидову норму.
+	
+	\begin{theorem}[О существовании сингулярного разложения]
+		Если\linebreak $A$~--- вещественная матрица размера $m \times n$,
+		то существуют ортогональные матрицы
+		\begin{equation}
+			U = [\, u_1 \mid \cdots \mid u_m \,] \in \mathbb{R}^{m \times m},
+			\quad
+			V = [\, v_1 \mid \cdots \mid v_n \,] \in \mathbb{R}^{n \times n},
+		\end{equation}
+		такие, что
+		\begin{equation}
+			U^T A V = \Sigma = \operatorname{diag}(\sigma_1, \ldots, \sigma_p) \in \mathbb{R}^{m \times n},
+			\quad
+			p = \min\{m, n\},
+		\end{equation}
+		где $\sigma_1 \geqslant \sigma_2 \geqslant \cdots \geqslant \sigma_p \geqslant 0$.
+	\end{theorem}
+	
+		Величины $\sigma_i$ называются сингулярными числами матрицы $\textbf{\textup{A}}$, 
+		векторы $\textbf{\textup{u}}_i$ --- ее \textbf{левыми сингулярными векторами}, 
+		а $\textbf{\textup{v}}_i$ --- \textbf{правыми сингулярными векторами}.  
+		
+		Визуальное представление сингулярного разложения зависит от формы матрицы $\textbf{\textup{A}}$: 
+		если строк больше, чем столбцов ($m > n$), или наоборот ($m < n$).  
+		
+		Рассмотрим примеры для матриц $3 \times 2$ и $2 \times 3$:
+		
+		\begin{equation}
+			\begin{bmatrix}
+				a_{11} & a_{12} \\
+				a_{21} & a_{22} \\
+				a_{31} & a_{32}
+			\end{bmatrix}
+			=
+			\begin{bmatrix}
+				u_{11} & u_{12} & u_{13} \\
+				u_{21} & u_{22} & u_{23} \\
+				u_{31} & u_{32} & u_{33}
+			\end{bmatrix}
+			\begin{bmatrix}
+				\sigma_{1} & 0 \\
+				0 & \sigma_{2} \\
+				0 & 0
+			\end{bmatrix}
+			\begin{bmatrix}
+				v_{11} & v_{12} \\
+				v_{21} & v_{22}
+			\end{bmatrix}^{T}.
+		\end{equation}
+		
+		\begin{equation}
+			\begin{bmatrix}
+				a_{11} & a_{12} & a_{13} \\
+				a_{21} & a_{22} & a_{23}
+			\end{bmatrix}
+			=
+			\begin{bmatrix}
+				u_{11} & u_{12} \\
+				u_{21} & u_{22}
+			\end{bmatrix}
+			\begin{bmatrix}
+				\sigma_{1} & 0 & 0 \\
+				0 & \sigma_{2} & 0
+			\end{bmatrix}
+			\begin{bmatrix}
+				v_{11} & v_{12} & v_{13} \\
+				v_{21} & v_{22} & v_{23} \\
+				v_{31} & v_{32} & v_{33}
+			\end{bmatrix}^{T}.
+		\end{equation}
+	
+	\subsection*{Свойства сингулярного разложения}
+	
+	Далее приведены важные следствия из теоремы. Доказательства следствий представлены в \cite{golub}.
+	
+	\begin{corollary}
+		Пусть $\textbf{\textup{U}}^{T} \textbf{\textup{A}} \textbf{\textup{V}} = \boldsymbol{\Sigma}$ --- сингулярное разложение матрицы 
+		$\textbf{\textup{A}} \in \mathbb{R}^{m \times n}$, где $m \geqslant n$. 
+		Тогда для $i = 1, \ldots, n$ выполняется
+		\begin{equation}
+			\textbf{\textup{A}} v_i = \sigma_i u_i, 
+			\qquad 
+			\textbf{\textup{A}}^{T} u_i = \sigma_i v_i.
+		\end{equation}
+	\end{corollary}
+	
+	Существует наглядная геометрическая интерпретация этого результата. 
+	Сингулярные числа матрицы $\textbf{\textup{A}}$ равны длинам полуосей гиперэллипсоида $E$, заданного
+	\begin{equation}
+		E = \{\, \textbf{\textup{A}} \textbf{\textup{x}} \colon \|\textbf{\textup{x}}\|_{2} = 1 \,\}.
+	\end{equation}
+	Направления полуосей задаются векторами $\textbf{\textup{u}}_i$, а их длины равны сингулярным числам.
+	Непосредственно из следствия получаем
+	\begin{equation}
+		\textbf{\textup{A}}^{T}\textbf{\textup{A}}\, \textbf{\textup{v}}_i = \sigma_i^{2}\, \textbf{\textup{v}}_i,
+		\qquad
+		\textbf{\textup{A}}\textbf{\textup{A}}^{T}\, \textbf{\textup{u}}_i = \sigma_i^{2}\, \textbf{\textup{u}}_i,
+		\quad i = 1,\ldots,n.
+	\end{equation}
+	Это показывает тесную связь между сингулярным разложением матрицы $\textbf{\textup{A}}$ и собственными разложениями симметричных матриц 
+	$\textbf{\textup{A}}^{T}\textbf{\textup{A}}$ и $\textbf{\textup{A}}\textbf{\textup{A}}^{T}$.
+	
+	\begin{corollary}
+		Пусть $\textbf{\textup{A}} \in \mathbb{R}^{m \times n}$. Тогда
+		\begin{equation}
+			\|\textbf{\textup{A}}\|_{2} = \sigma_{1},
+			\qquad
+			\|\textbf{\textup{A}}\|_{F} = 
+			\sqrt{\sigma_{1}^{2} + \sigma_{2}^{2} + \cdots + \sigma_{p}^{2}},
+		\end{equation}
+		где $p = \min\{\, m, n \,\}$.
+	\end{corollary}
+	
+	\begin{corollary}
+		Пусть $\textbf{\textup{A}} \in \mathbb{R}^{m \times n}$ и $\textbf{\textup{E}} \in \mathbb{R}^{m \times n}$. Тогда
+		\begin{equation}
+			\sigma_{\max}(\textbf{\textup{A}} + \textbf{\textup{E}}) 
+			\leqslant 
+			\sigma_{\max}(\textbf{\textup{A}}) + \|\textbf{\textup{E}}\|_{2},
+			\qquad
+			\sigma_{\min}(\textbf{\textup{A}} + \textbf{\textup{E}}) 
+			\geqslant 
+			\sigma_{\min}(\textbf{\textup{A}}) - \|\textbf{\textup{E}}\|_{2}.
+		\end{equation}
+	\end{corollary}
+	Если к матрице добавляется столбец, то наибольшее сингулярное число увеличивается, 
+	а наименьшее --- уменьшается.  
+	\begin{corollary}
+		Пусть $\textbf{\textup{A}} \in \mathbb{R}^{m \times n}$, где $m > n$, и 
+		$\textbf{\textup{z}} \in \mathbb{R}^{m}$. Тогда
+		\begin{equation}
+			\sigma_{\max}\!\left( [\, \textbf{\textup{A}} \mid \textbf{\textup{z}} \,] \right) 
+			\geqslant 
+			\sigma_{\max}(\textbf{\textup{A}}),
+			\qquad
+			\sigma_{\min}\!\left( [\, \textbf{\textup{A}} \mid \textbf{\textup{z}} \,] \right) 
+			\leqslant 
+			\sigma_{\min}(\textbf{\textup{A}}).
+		\end{equation}
+	\end{corollary}
+	
+	Сингулярное разложение удобно описывает ранг матрицы, а также задает 
+	ортонормированные базисы для ее ядра и образа.
+	\begin{corollary}
+		Пусть матрица $\textbf{\textup{A}}$ имеет $r$ положительных сингулярных чисел. Тогда
+		\begin{equation}
+			\begin{gathered}
+				\operatorname{rank}(\textbf{\textup{A}}) = r,
+				\quad
+				\operatorname{Ker}(\textbf{\textup{A}}) = 
+				\operatorname{span}\{\, \textbf{\textup{v}}_{r+1}, \ldots, \textbf{\textup{v}}_{n} \,\},\\
+				\operatorname{Im}(\textbf{\textup{A}}) = 
+				\operatorname{span}\{\, \textbf{\textup{u}}_{1}, \ldots, \textbf{\textup{u}}_{r} \,\}.
+			\end{gathered}
+		\end{equation}
+	\end{corollary}
+	
+	\begin{corollary}
+		Если матрица $\textbf{\textup{A}}$ имеет ранг $r$, то ее можно представить как сумму $r$ матриц ранга~1. 
+		Сингулярное разложение дает особенно удобный вид этого разложения.
+		Пусть $\textbf{\textup{A}} \in \mathbb{R}^{m \times n}$ и $\operatorname{rank}(\textbf{\textup{A}})~=~r$. Тогда
+		\begin{equation}
+			\textbf{\textup{A}} = 
+			\sum_{i = 1}^{r} 
+			\sigma_i\, \textbf{\textup{u}}_i\, \textbf{\textup{v}}_i^{T}.
+		\end{equation}
+	\end{corollary}
+	
+	
+	\begin{theorem}[Теорема Эккарта~---~Юнга]
+		Пусть $k < r = \operatorname{rank}(\textbf{\textup{A}})$. 
+		Тогда наилучшее приближение матрицы $\textbf{\textup{A}}$ матрицей ранга $k$ 
+		в смысле нормы~2 достигается, если отбросить все сингулярные числа, начиная с $(k+1)$-го.  
+		Обозначим
+		\begin{equation}
+			\textbf{\textup{A}}_{k} = 
+			\sum_{i = 1}^{k} 
+			\sigma_i\, \textbf{\textup{u}}_i\, \textbf{\textup{v}}_i^{T}.
+			\label{eq:eckart-young-ak}
+		\end{equation}
+		Тогда для любой матрицы $\textbf{\textup{B}}$ ранга не выше $k$ выполняется
+		\begin{equation}
+			\|\textbf{\textup{A}} - \textbf{\textup{B}}\|_{2} 
+			\geqslant 
+			\|\textbf{\textup{A}} - \textbf{\textup{A}}_{k}\|_{2} 
+			= \sigma_{k+1}.
+			\label{eq:eckart-young-error}
+		\end{equation}
+	\end{theorem}
+	
+	
+	
+	
+	
+	\section*{Метод Голуба---Кахана}
+	
+	Метод Голуба---Кахана (или bidiagonalization) является основным
+	итерационным процессом, лежащим в основе современных алгоритмов вычисления
+	сингулярного разложения. Цель --- привести произвольную матрицу
+	$\mathbf{A} \in \mathbb{R}^{m \times n}$ к верхней бидиагональной форме при помощи
+	ортонормированных преобразований слева и справа:
+	$$
+	\mathbf{A} = \mathbf{U}\, \mathbf{B}\, \mathbf{V}^{T},
+	\qquad
+	\mathbf{U} \in \mathbb{R}^{m \times m},\quad
+	\mathbf{V} \in \mathbb{R}^{n \times n},
+	$$
+	где $\mathbf{B}$ --- верхняя бидиагональная матрица вида
+	$$
+	\mathbf{B} = 
+	\begin{pmatrix}
+		\alpha_{1} & \beta_{2}  &        &        & 0 \\
+		& \alpha_{2} & \beta_{3} &        &   \\
+		&            & \ddots & \ddots &   \\
+		&            &        & \alpha_{p-1} & \beta_{p} \\
+		0          &            &        &             & \alpha_{p}
+	\end{pmatrix},
+	\qquad
+	p = \min\{m,n\};
+	$$
+	$$
+	\mathbf{U} = [\,\mathbf{u}_1 \mid \cdots \mid \mathbf{u}_p \mid \star \,] \in \mathbb{R}^{m\times m}, 
+	\qquad
+	\mathbf{V} = [\,\mathbf{v}_1 \mid \cdots \mid \mathbf{v}_p \mid \star \,] \in \mathbb{R}^{n\times n},
+	$$
+	
+	
+	Пусть задан произвольный ненулевой стартовый вектор $\mathbf{u}_{1}$.
+	Нормируем его:
+	\begin{equation}
+	\beta_{1} = \|\mathbf{u}_{1}\|_{2},
+	\qquad
+	\mathbf{u}_{1} := \frac{\mathbf{u}_{1}}{\beta_{1}}.
+	\end{equation}
+	
+	\begin{enumerate}
+		\item Вычисляем первый правый направляющий вектор:
+		\begin{equation}
+		\mathbf{r} = \mathbf{A}^{T}\mathbf{u}_{1},
+		\qquad
+		\alpha_{1} = \|\mathbf{r}\|_{2},
+		\qquad
+		\mathbf{v}_{1} = \frac{\mathbf{r}}{\alpha_{1}}.
+	\end{equation}
+		
+		\item Для $k = 1,2,\ldots,p-1$:
+		\begin{align*}
+			\mathbf{p} &= \mathbf{A}\mathbf{v}_{k} - \alpha_{k} \mathbf{u}_{k}, 
+			&
+			\beta_{k+1} &= \|\mathbf{p}\|_{2},
+			&
+			\mathbf{u}_{k+1} &= \frac{\mathbf{p}}{\beta_{k+1}},
+			\\
+			\mathbf{r} &= \mathbf{A}^{T}\mathbf{u}_{k+1} - \beta_{k+1}\mathbf{v}_{k},
+			&
+			\alpha_{k+1} &= \|\mathbf{r}\|_{2},
+			&
+			\mathbf{v}_{k+1} &= \frac{\mathbf{r}}{\alpha_{k+1}}.
+		\end{align*}
+	\end{enumerate}
+	
+	На каждом шаге пары $(\alpha_{k}, \beta_{k})$ заполняют диагонали бидиагональной матрицы $\mathbf{B}$.
+	
+	\subsection*{Связь с сингулярным разложением}
+	
+	Если выполнить сингулярное разложение бидиагональной матрицы
+	\begin{equation}
+	\mathbf{B} = \widetilde{\mathbf{U}}\,\boldsymbol{\Sigma}\,\widetilde{\mathbf{V}}^{T},
+\end{equation}
+	то сингулярное разложение матрицы $\mathbf{A}$ получается как
+	\begin{equation}
+	\mathbf{A}
+	= (\mathbf{U}\widetilde{\mathbf{U}})\,\boldsymbol{\Sigma}\,(\mathbf{V}\widetilde{\mathbf{V}})^{T}.\label{fm22}
+\end{equation}
+	
+	\subsection*{QR-итерации со сдвигами для бидиагональных матриц}
+	
+	Для бидиагональной матрицы $\mathbf{B}$ сингулярные числа совпадают 
+	с квадратными корнями собственных значений матрицы
+	\begin{equation}
+	\mathbf{B}^{T}\mathbf{B},
+\end{equation}
+	которая является симметричной трехдиагональной матрицей. 
+	Поэтому для ее диагонализации применяется \textbf{QR}-итерация со сдвигами,
+	специализированная под трехдиагональный (и, следовательно, бидиагональный)
+	случай.
+	
+	На каждом шаге выполняются следующие операции:
+	
+	\begin{enumerate}
+		\item Вычисляется сдвиг Уилкинсона $\mu$, основанный на последнем 
+		$2\times 2$ подблоке матрицы $\mathbf{B}^{T}\mathbf{B}$.
+		\item Формируется матрица
+	\begin{equation}
+		\mathbf{T}_k = \mathbf{B}_k^{T}\mathbf{B}_k - \mu \mathbf{E},
+	\end{equation}
+		где $\mathbf{E}$ --- единичная матрица.
+		\item Для матрицы $\mathbf{T}_k$ выполняется \textbf{QR}-разложение:
+	\begin{equation}
+		\mathbf{T}_k = \mathbf{Q}_k \mathbf{R}_k,
+	\end{equation}
+		где $\mathbf{Q}_k$ содержит последовательность вращений Гивенса.
+		\item Матрица $\mathbf{B}_k$ обновляется как
+		\begin{equation}
+		\mathbf{B}_{k+1} = \mathbf{B}_{k} \mathbf{Q}_{k}.
+	\end{equation}
+		Благодаря структуре вращений Гивенса, матрица $\mathbf{B}_{k+1}$ 
+		снова остается бидиагональной.
+		\item Преобразования $\mathbf{Q}_{k}$ также аккумулируются в матрицах
+		\begin{equation}
+		\widetilde{\mathbf{V}} \gets \widetilde{\mathbf{V}} \mathbf{Q}_{k},
+		\qquad
+		\widetilde{\mathbf{U}} \gets \widetilde{\mathbf{U}} \mathbf{P}_{k},
+	\end{equation}
+		где $\mathbf{P}_{k}$ --- соответствующие вращения при приведении
+		$\mathbf{B}_k$ к бидиагональному виду.
+	\end{enumerate}
+	
+	Итерации продолжаются до тех пор, пока внедиагональные элементы 
+	(элементы $\beta_{k}$ бидиагонали) не станут достаточно малыми. 
+	При этом бидиагональная матрица $\mathbf{B}$ превращается в диагональную:
+	\begin{equation}
+	\mathbf{B} \longrightarrow 
+	\boldsymbol{\Sigma} = \operatorname{diag}(\sigma_{1},\ldots,\sigma_{p}),
+\end{equation}
+	где $\sigma_{1}\geqslant\ldots\geqslant\sigma_{p}\ge 0$ --- сингулярные числа.
+	
+	В результате QR-итераций получаем
+	\begin{equation}
+	\mathbf{B}
+	= \widetilde{\mathbf{U}}\,
+	\boldsymbol{\Sigma}\,
+	\widetilde{\mathbf{V}}^{T}.
+\end{equation}
+	
+	\subsection*{Итоговое сингулярное разложение матрицы {$\mathbf{A}$}}
+	
+	Подставляя найденное разложение матрицы $\mathbf{B}$ в представление
+	$\mathbf{A} = \mathbf{U}\mathbf{B}\mathbf{V}^{T}$, получаем (\ref{fm22}).
+	
+	Обозначив
+	\begin{equation}
+	\mathbf{U}_{\mathrm{SVD}} = \mathbf{U}\,\widetilde{\mathbf{U}},
+	\qquad
+	\mathbf{V}_{\mathrm{SVD}} = \mathbf{V}\,\widetilde{\mathbf{V}},
+\end{equation}
+	получаем сингулярное разложение матрицы $\mathbf{A}$:
+	\begin{equation}
+		\mathbf{A} = \mathbf{U}_{\mathrm{SVD}}\,\boldsymbol{\Sigma}\,
+		\mathbf{V}_{\mathrm{SVD}}^{T}.
+	\end{equation}
+	
+
+
+
+	
+	
+	
+
+	
+	\subsection*{Задания}
+	
+	\begin{enumerate}
+		\item Реализовать алгоритм Голуба --- Кахана, вывести промежуточный результат.
+		\item Реализовать \textbf{QR}-итерации со сдвигами для бидиагональной матрицы, вывести результат.
+		\item Продемонстрировать работу алгоритма на матрицах с произвольными $m$ и $n$.
+		\item Оценить фактическую погрешность полученного сингулярного разложения и фактическую погрешность полученных сингулярных чисел.
+	\end{enumerate}
+
+    \renewcommand{\bibname}{{Список литературы}}
+    \bibliographystyle{gost2008}
+    \begin{thebibliography}{3}
+    	\bibitem{golub}
+    	Golub G. H., Van Loan C. F. Matrix Computations (4th ed.). Baltimore: Johns Hopkins University Press, 2013. 781 p.
+    	
+        \bibitem{lebedeva}
+        Лебедева А. В., Пакулина А. Н. Практикум по методам вычислений. Часть 1. Учебно-методическое пособие. СПб.: Санкт-Петербургский государственный университет, 2021.~156 с.
+        
+        \bibitem{Mis}
+        Мысовских И. П. Лекции по методам вычислений: Учебное пособие. СПб.: Издательство Санкт-Петербургского университета, 1998. 472~с.
+        
+        \bibitem{Fadeev}
+        Фаддеев Д. К., Фаддеева В. Н. Вычислительные методы линейной алгебры. М.:  Государственное издательство физико-математической литературы, 1960. 655 с.
+    \end{thebibliography}
+\end{document}
