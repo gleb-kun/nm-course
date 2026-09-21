@@ -3,3 +3,7 @@
 *.synctex.gz
 *.aux
 *.log
+
+# Directories
+.virtual_documents
+.ipynb_checkpoints
