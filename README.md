@@ -1,8 +1,8 @@
 # nm-course
 
-Materials for a course on numerical methods.
+Materials for courses related to computational mathematics.
 
-The repository contains lecture notes, practical assignments, examples, and reference literature. The materials use Python and Jupyter notebooks for numerical computations and LaTeX for practical assignment handouts.
+The repository contains lecture notes, practical assignments, examples, and reference literature.
 
 Some materials are available in both English and Russian. See the README files:
 - [Russian](README_RU.md),
@@ -10,6 +10,6 @@ Some materials are available in both English and Russian. See the README files:
 
 ## Purpose
 
-- `lectures/` — lecture materials and examples in Jupyter notebooks.
-- `practices/` — practical assignments in Jupyter notebooks and LaTeX, with supporting data files.
-- `literature/` — reference books and supplementary reading in PDF and DjVu formats.
+- `lectures/` — lecture materials.
+- `practices/` — practical assignments, with supporting data files.
+- `literature/` — reference books and supplementary reading.
