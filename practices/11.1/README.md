@@ -1,4 +1,4 @@
-# 11.1. Quadrature Formulas on a Single Interval
+# 11.1. Quadrature Formulas
 
 Study quadrature rules, their algebraic degrees of accuracy, and error estimates.
 
