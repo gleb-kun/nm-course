@@ -1,5 +1,5 @@
-# 11.1. Numerical Integration
+# 11.1. Quadrature Formulas on a Single Interval
 
-Approximate definite integrals using quadrature formulas and estimate their errors.
+Study quadrature rules, their algebraic degrees of accuracy, and error estimates.
 
 Materials: [English](11.1.ipynb) · [Russian](11.1_rus.ipynb).
