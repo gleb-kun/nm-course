@@ -10,6 +10,6 @@ Some materials are available in both English and Russian. See the README files:
 
 ## Purpose
 
-- `lectures/` — lecture materials.
-- `practices/` — practical assignments, with supporting data files.
+- [Lectures](lectures/README.md)
+- [Practical topics and supporting files](practices/README.md)
 - `literature/` — reference books and supplementary reading.
