@@ -2,6 +2,6 @@
 
 Explore vector and matrix norms, conditioning, and matrix inversion.
 
-[LaTeX worksheet (in Russian)](02.0.tex)
+[LaTeX worksheet (in Russian)](practice02_0_rus.tex)
 
 [All practical topics](../README.md) · [Русский](README_RU.md)

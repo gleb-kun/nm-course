@@ -2,6 +2,6 @@
 
 Construct LU and LUP decompositions to solve systems of linear equations.
 
-[LaTeX worksheet (in Russian)](02.2.tex)
+[LaTeX worksheet (in Russian)](practice02_2_rus.tex)
 
 [All practical topics](../README.md) · [Русский](README_RU.md)

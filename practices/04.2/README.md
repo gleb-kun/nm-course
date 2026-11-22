@@ -2,6 +2,6 @@
 
 Compute eigenvalues and eigenvectors using inverse iteration.
 
-[LaTeX worksheet (in Russian)](04.2.tex)
+[LaTeX worksheet (in Russian)](practice04_2_rus.tex)
 
 [All practical topics](../README.md) · [Русский](README_RU.md)

@@ -2,6 +2,6 @@
 
 Study quadrature rules, their algebraic degrees of accuracy, and error estimates.
 
-Materials: [English](11.1.ipynb) · [Russian](11.1_rus.ipynb).
+Materials: [English](practice11_1_eng.ipynb) · [Russian](practice11_1_rus.ipynb).
 
 [All practical topics](../README.md) · [Русский](README_RU.md)

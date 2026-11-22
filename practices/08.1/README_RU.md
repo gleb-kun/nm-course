@@ -2,6 +2,6 @@
 
 Построение интерполяционных полиномов Лагранжа и Ньютона и оценка погрешности приближения.
 
-[Ноутбук Jupyter](08.1.ipynb) · [Данные о жилье (CSV)](files/housing.csv)
+[Ноутбук Jupyter](practice08_1_rus.ipynb) · [Данные о жилье (CSV)](files/housing.csv)
 
 [Все практические темы](../README_RU.md) · [English](README.md)

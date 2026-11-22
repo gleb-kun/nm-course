@@ -2,6 +2,6 @@
 
 Construct QR decompositions using rotations and reflections.
 
-[LaTeX worksheet (in Russian)](02.5.tex)
+[LaTeX worksheet (in Russian)](practice02_5_rus.tex)
 
 [All practical topics](../README.md) · [Русский](README_RU.md)
