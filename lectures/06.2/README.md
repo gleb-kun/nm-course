@@ -1,7 +1,7 @@
-# 06.2. Numerical Methods for Solving the Cauchy Problem
+# 05.2. Composite quadrature formulas
 
-Derive the Taylor, Euler, Runge–Kutta, and Adams methods for the Cauchy problem and examine their accuracy and stability.
+Construct composite quadrature rules and study their convergence, error estimates, and algebraic degree of accuracy.
 
-[English notebook](lecture07_eng.ipynb) · [Russian notebook](lecture07_rus.ipynb)
+[English notebook](lecture05_eng.ipynb) · [Russian notebook](lecture05_rus.ipynb)
 
 [All lectures](../README.md) · [Русский](README_RU.md)

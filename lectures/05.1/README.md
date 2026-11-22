@@ -1,7 +1,7 @@
-# 05.1. Numerical integration
+# 04.1. Numerical differentiation
 
-Construct interpolatory quadrature formulas, derive the Newton–Cotes rules, and examine their accuracy and sensitivity to errors in function values.
+Derive formulas for the first and second derivatives, use polynomial interpolation to handle different node layouts, and study the effect of data errors on step selection.
 
-[English notebook](lecture02_eng.ipynb) · [Russian notebook](lecture02_rus.ipynb)
+[English notebook](lecture01_eng.ipynb) · [Russian notebook](lecture01_rus.ipynb)
 
 [All lectures](../README.md) · [Русский](README_RU.md)

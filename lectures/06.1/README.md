@@ -1,7 +1,7 @@
-# 06.1. Cauchy Problem for a First-Order Ordinary Differential Equation
+# 05.1. Numerical integration
 
-Formulate the Cauchy problem for a first-order ordinary differential equation, study how perturbations propagate, and introduce consistency, stability, and convergence of discrete methods.
+Construct interpolatory quadrature formulas, derive the Newton–Cotes rules, and examine their accuracy and sensitivity to errors in function values.
 
-[English notebook](lecture06_eng.ipynb) · [Russian notebook](lecture06_rus.ipynb)
+[English notebook](lecture02_eng.ipynb) · [Russian notebook](lecture02_rus.ipynb)
 
 [All lectures](../README.md) · [Русский](README_RU.md)
