@@ -1,6 +1,6 @@
 # 12.2. Initial Value Problems for ODEs. Runge–Kutta and Adams Methods
 
-Implement fourth-order Runge–Kutta and fifth-order Adams–Bashforth.
+Implement the classical fourth-order Runge–Kutta method and the explicit and implicit fifth-order Adams methods.
 
 [English notebook](practice12_2_eng.ipynb) · [Russian notebook](practice12_2_rus.ipynb)
 
