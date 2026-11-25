@@ -42,3 +42,5 @@
 - [15.1. Elliptic Partial Differential Equations](15.1/README.md)
 - [15.2. Parabolic Partial Differential Equations](15.2/README.md)
 - [15.3. Hyperbolic Partial Differential Equations](15.3/README.md)
+- [16.1. Finite Element Method for One-Dimensional Boundary Value Problems](16.1/README.md)
+- [16.2. Finite Element Method on Triangular Meshes](16.2/README.md)
