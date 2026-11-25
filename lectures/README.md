@@ -13,3 +13,5 @@
 - [07.1. Cauchy Problem for a First-Order Ordinary Differential Equation](07.1/README.md)
 - [07.2. Numerical Methods for Solving the Cauchy Problem](07.2/README.md)
 - [07.3. Stability, Systems of ODEs, and Stiff Problems](07.3/README.md)
+- [08.1. Boundary value problems for the one-dimensional steady-state heat equation](08.1/README.md)
+- [08.2. Numerical methods for two-point boundary value problems](08.2/README.md)
